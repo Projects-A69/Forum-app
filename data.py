@@ -23,8 +23,8 @@ class Messages(BaseModel): # Dimatur
 class Categories(BaseModel): # Ivan
     name_categories: int
     info_categories: str
-    type_access_private: bool
-    date_create_access: datetime
+    type_access_private: bool = False
+    date_create_access: datetime = None
     user_id_user: int
 
 class Topics(BaseModel):
@@ -47,6 +47,6 @@ class Replies(BaseModel): # Dimitur
 class ReplyVotes(BaseModel): # Ivan
     id_replies: int
     vote_type: str
-    created_at: datetime
+    created_at: datetime = None
     replies_id: int
     user_id_user: int
