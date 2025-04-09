@@ -17,7 +17,7 @@ class Messages(BaseModel): # Dimatur
     reciever: str
     text_messages: str
     status: str
-    created_at: datetime
+    created_at: datetime = None
     user_id: str
 
 class Categories(BaseModel): # Ivan
@@ -39,8 +39,8 @@ class Topics(BaseModel):
 class Replies(BaseModel): # Dimitur
     author: str
     text_replies: str
-    date_create: datetime
-    date_update: datetime
+    date_create: datetime = None
+    date_update: datetime = None
     user_id: int
     topic_id: int
 
