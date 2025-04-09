@@ -18,7 +18,7 @@ class Messages(BaseModel): # Dimatur
     text_messages: str
     status: str
     created_at: datetime = None
-    user_id: str
+    user_id: int
 
 class Categories(BaseModel): # Ivan
     name_categories: int
