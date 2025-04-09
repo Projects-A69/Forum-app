@@ -1,8 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class Users(BaseModel): # Uasim
-    pass
 class Users(BaseModel):
     id: int | None
     first_name: str
@@ -14,13 +12,19 @@ class Users(BaseModel):
     date_registration: datetime = None
 
 class Messages(BaseModel): # Dimatur
-    pass
+    id: str
+    sender: str
+    reciever: str
+    text_messages: str
+    status: str
+    created_at: datetime
+    user_id: str
 
 class Categories(BaseModel): # Ivan
     name_categories: int
     info_categories: str
     type_access_private: bool
-    date_create_access: datetime = Field(default_factory = datetime.now)
+    date_create_access: datetime
     user_id_user: int
 
 class Topics(BaseModel):
@@ -33,11 +37,16 @@ class Topics(BaseModel):
     best_reply_id: int
 
 class Replies(BaseModel): # Dimitur
-    pass
+    author: str
+    text_replies: str
+    date_create: datetime
+    date_update: datetime
+    user_id: int
+    topic_id: int
 
 class ReplyVotes(BaseModel): # Ivan
     id_replies: int
     vote_type: str
-    created_at: datetime = Field(default_factory = datetime.now)
+    created_at: datetime
     replies_id: int
     user_id_user: int
