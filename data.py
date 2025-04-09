@@ -11,7 +11,7 @@ class Users(BaseModel):
     password: str
     date_registration: datetime = None
 
-class Messages(BaseModel): # Dimatur
+class Messages(BaseModel):
     id: str
     sender: str
     reciever: str
@@ -20,7 +20,7 @@ class Messages(BaseModel): # Dimatur
     created_at: datetime = None
     user_id: int
 
-class Categories(BaseModel): # Ivan
+class Categories(BaseModel):
     name_categories: int
     info_categories: str
     type_access_private: bool = False
@@ -36,7 +36,7 @@ class Topics(BaseModel):
     created_at: datetime
     best_reply_id: int
 
-class Replies(BaseModel): # Dimitur
+class Replies(BaseModel):
     author: str
     text_replies: str
     date_create: datetime = None
@@ -44,7 +44,7 @@ class Replies(BaseModel): # Dimitur
     user_id: int
     topic_id: int
 
-class ReplyVotes(BaseModel): # Ivan
+class ReplyVotes(BaseModel):
     id_replies: int
     vote_type: str
     created_at: datetime = None
