@@ -72,14 +72,14 @@ class Replies(BaseModel):
 replies: list[Replies] = []
 
 
-class ReplyVotes(BaseModel):
+class RepliesVotes(BaseModel):
     id: int
     vote_type: str
     created_at: datetime = None
     reply_id: int
     user_id: int
     
-reply_votes: list[ReplyVotes] = []
+reply_votes: list[RepliesVotes] = []
 
 class Messages(BaseModel):
     id: int
@@ -87,4 +87,4 @@ class Messages(BaseModel):
     created_at: datetime = None
     reply_id: int
     user_id: int
-    
+
