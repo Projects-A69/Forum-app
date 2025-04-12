@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class User(BaseModel):
+class Users(BaseModel):
     id: int = None
     first_name: str
     last_name : str
@@ -11,30 +11,41 @@ class User(BaseModel):
     password: str
     date_registration: datetime = None
 
-users:list[User] = []
+users:list[Users] = []
 
 class Messages(BaseModel):
     id: int     #change
-    sender: str
-    reciever: str
-    text_messages: str
+    sender_id: str
+    text: str
     status: str
     created_at: datetime = None
-    user_id: int
+    conversations_id: int
     
 messages: list[Messages] = []
 
+class Conversations(BaseModel):
+    id: int
+    name: str
+
+class Conversations_has_user(BaseModel):
+    conversations_id: int
+    users_id: int
 
 class Categories(BaseModel):
-    id_categories: int #change
-    categories_name:str         #change
-    info_categories: str
-    type_access_private: bool = False
+    id: int
+    name: str
+    info: str
+    is_private: bool = False
     date_create_access: datetime = None
     user_id_user: int
     
 categories: list[Categories] = []
 
+class Category_acess(BaseModel):
+    id: int
+    user_id: int
+    category_id: int
+    acess_level: str
 
 class Topics(BaseModel):
     id: int
@@ -42,31 +53,38 @@ class Topics(BaseModel):
     user_id: int
     category_id: int
     is_locked: bool = None
-    created_at: datetime
-    best_reply_id: int
+    info_views: int
+    date_create: datetime = None
     
 topics: list[Topics] = []
 
 
 class Replies(BaseModel):
     replies_id:int
-   # author: str          #change
-    text_replies: str
+    author: str
+    text: str
     date_create: datetime = None
     date_update: datetime = None
     user_id: int
     topic_id: int
+    is_best_reply: bool = None
     
 replies: list[Replies] = []
 
 
 class ReplyVotes(BaseModel):
-    id_replies: int
+    id: int
     vote_type: str
     created_at: datetime = None
-    replies_id: int
-    user_id_user: int
+    reply_id: int
+    user_id: int
     
 reply_votes: list[ReplyVotes] = []
 
-
+class Messages(BaseModel):
+    id: int
+    vote_type: str
+    created_at: datetime = None
+    reply_id: int
+    user_id: int
+    
