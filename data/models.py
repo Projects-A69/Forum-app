@@ -14,8 +14,8 @@ class Users(BaseModel):
 users:list[Users] = []
 
 class Messages(BaseModel):
-    id: int     #change
-    sender_id: str
+    id: int
+    sender_id: int
     text: str
     status: str
     created_at: datetime = None
@@ -37,15 +37,15 @@ class Categories(BaseModel):
     info: str
     is_private: bool = False
     date_create_access: datetime = None
-    user_id_user: int
+    user_id: int
     
 categories: list[Categories] = []
 
-class Category_acess(BaseModel):
+class Category_access(BaseModel):
     id: int
     user_id: int
     category_id: int
-    acess_level: str
+    access_level: str
 
 class Topics(BaseModel):
     id: int
@@ -53,7 +53,6 @@ class Topics(BaseModel):
     user_id: int
     category_id: int
     is_locked: bool = None
-    info_views: int
     date_create: datetime = None
     
 topics: list[Topics] = []
