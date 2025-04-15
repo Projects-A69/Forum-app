@@ -9,4 +9,4 @@ def get_categories():
     
     categories = services.get_all_categories()
     
-    
+1
