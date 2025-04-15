@@ -8,5 +8,3 @@ def get_categories():
     # ToDo authentication will follow
     
     categories = services.get_all_categories()
-    
-1
