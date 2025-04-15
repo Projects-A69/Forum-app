@@ -14,23 +14,13 @@ class Users(BaseModel):
 users:list[Users] = []
 
 
-class Messages(BaseModel):
-    id: int
-    sender_id: int
-    reciever_id: int
-    text: str
-    status: str
-    created_at: datetime = None
-    
-messages: list[Messages] = []
-
-
 class Categories(BaseModel):
     id: int
     name: str
     info: str
     is_private: bool = False
-    date_create_access: datetime = None
+    date_created: datetime = None
+    is_locked: bool = False
     
 categories: list[Categories] = []
 
@@ -54,7 +44,7 @@ topics: list[Topics] = []
 
 
 class Replies(BaseModel):
-    replies_id:int
+    id:int
     text: str
     date_create: datetime = None
     date_update: datetime = None
@@ -74,8 +64,11 @@ reply_votes: list[RepliesHasUsers] = []
 
 class Messages(BaseModel):
     id: int
-    vote_type: str
+    sender_id : int
+    text :str
     created_at: datetime = None
-    reply_id: int
-    user_id: int
+    receiver_id: int
+    
+messages: list[Messages] = []
+
 
