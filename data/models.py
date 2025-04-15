@@ -13,23 +13,17 @@ class Users(BaseModel):
 
 users:list[Users] = []
 
+
 class Messages(BaseModel):
     id: int
     sender_id: int
+    reciever_id: int
     text: str
     status: str
     created_at: datetime = None
-    conversations_id: int
     
 messages: list[Messages] = []
 
-class Conversations(BaseModel):
-    id: int
-    name: str
-
-class Conversations_has_user(BaseModel):
-    conversations_id: int
-    users_id: int
 
 class Categories(BaseModel):
     id: int
@@ -41,11 +35,13 @@ class Categories(BaseModel):
     
 categories: list[Categories] = []
 
+
 class Category_access(BaseModel):
     id: int
     user_id: int
     category_id: int
     access_level: str
+
 
 class Topics(BaseModel):
     id: int
@@ -79,6 +75,7 @@ class RepliesVotes(BaseModel):
     user_id: int
     
 reply_votes: list[RepliesVotes] = []
+
 
 class Messages(BaseModel):
     id: int
