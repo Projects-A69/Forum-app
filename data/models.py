@@ -34,12 +34,12 @@ class Categories(BaseModel):
     
 categories: list[Categories] = []
 
-
+'''
 class CategoryHasUsers(BaseModel):
     categories_id: int
     users_id: int
     acess_level: bool = False
-
+'''
 
 class Topics(BaseModel):
     id: int
@@ -63,14 +63,14 @@ class Replies(BaseModel):
     
 replies: list[Replies] = []
 
-
+'''
 class RepliesHasUsers(BaseModel):
     replies_id: int
     users_id: int
-    vote_type: bool = False     #check
+    vote_type: bool = False
  
-reply_votes: list[RepliesHasUsers] = []    #check
-
+reply_votes: list[RepliesHasUsers] = []
+'''
 
 class Messages(BaseModel):
     id: int
