@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+
 class Users(BaseModel):
     id: int = None
     first_name: str
@@ -11,9 +12,6 @@ class Users(BaseModel):
     password: str
     date_registration: datetime = None
 
-users:list[Users] = []
-
-
 class Categories(BaseModel):
     id: int
     name: str
@@ -22,8 +20,6 @@ class Categories(BaseModel):
     date_created: datetime = None
     is_locked: bool = False
     
-categories: list[Categories] = []
-
 '''
 class CategoryHasUsers(BaseModel):
     categories_id: int
@@ -36,13 +32,21 @@ class Topics(BaseModel):
     title: str
     user_id: int
     category_id: int
-    is_locked: bool = None
-    date_create: datetime = None
-    best_reply_id: int
+    is_locked: int = 0
+    date_create: datetime = datetime.now()
+    best_reply_id: int = 0
+
+    @classmethod
+    def from_query_result(cls, id, title, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0):
+        return cls(
+            id=id,
+            title=title,
+            user_id=user_id,
+            category_id=category_id,
+            is_locked=is_locked if is_locked is not None else 0,
+            date_create=date_create or datetime.now(),
+            best_reply_id=best_reply_id)
     
-topics: list[Topics] = []
-
-
 class Replies(BaseModel):
     id:int
     text: str
@@ -51,7 +55,6 @@ class Replies(BaseModel):
     user_id: int
     topic_id: int
     
-replies: list[Replies] = []
 
 '''
 class RepliesHasUsers(BaseModel):
@@ -69,6 +72,5 @@ class Messages(BaseModel):
     created_at: datetime = None
     receiver_id: int
     
-messages: list[Messages] = []
 
 
