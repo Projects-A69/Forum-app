@@ -7,4 +7,4 @@ categories_router = APIRouter(prefix='/categories')
 # def get_categories():
 #     # ToDo authentication will follow
     
-    categories = services.get_all_categories()
+    # categories = services.get_all_categories()

@@ -4,13 +4,23 @@ from datetime import datetime
 
 class Users(BaseModel):
     id: int = None
-    first_name: str
-    last_name : str
+    username: str
     telephone_number: str
     email: str
     is_admin: bool = False
     password: str
     date_registration: datetime = None
+    
+    @classmethod
+    def from_query_result(cls, id, username, telephone_number, email, is_admin=False, password='', date_registration=None):
+        return cls(
+            id=id,
+            username=username,
+            telephone_number=telephone_number,
+            email=email,
+            is_admin=is_admin if is_admin is not None else False,
+            password=password,
+            date_registration=date_registration or datetime.now())
 
 class Categories(BaseModel):
     id: int
@@ -46,6 +56,11 @@ class Topics(BaseModel):
             is_locked=is_locked if is_locked is not None else 0,
             date_create=date_create or datetime.now(),
             best_reply_id=best_reply_id)
+        
+        
+class TopicCreate(BaseModel):
+    title: str
+    category_id: int
     
 class Replies(BaseModel):
     id:int
