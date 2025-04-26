@@ -72,7 +72,11 @@ class Replies(BaseModel):
     date_update: datetime = None
     user_id: int
     topic_id: int
-    
+
+class RepliesCreate(BaseModel):
+    text: str
+    user_id: int
+    topic_id: int
 
 '''
 class RepliesHasUsers(BaseModel):
@@ -83,12 +87,17 @@ class RepliesHasUsers(BaseModel):
 reply_votes: list[RepliesHasUsers] = []
 '''
 
+
 class Messages(BaseModel):
     id: int
     sender_id : int
     text :str
     created_at: datetime = None
     receiver_id: int
-    
+
+class MessagesCreate(BaseModel):
+    receiver_id: int
+    text:str
+
 
 

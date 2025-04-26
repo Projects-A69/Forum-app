@@ -1,4 +1,4 @@
-from data.database import read_query
+from data.database import read_query, insert_query, update_query
 from data.models import Replies
 
 def get_all():
@@ -22,3 +22,12 @@ def get_by_id(id: int):
         "user_id": row[4],
         "topic_id": row[5]
     }]
+
+def create_replies(text, user_id, topic_id):
+    new_replies = insert_query('INSERT INTO replies (text, user_id, topic_id) VALUES (?, ?, ?)', (text, user_id, topic_id))
+    return {
+        "id": new_replies,
+        "text": text,
+        "user_id": user_id,
+        "topic_id": topic_id
+    }

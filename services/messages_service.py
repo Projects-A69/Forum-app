@@ -1,4 +1,4 @@
-from data.database import read_query
+from data.database import read_query, insert_query, update_query
 from data.models import Messages
 
 def all():
@@ -22,3 +22,11 @@ def get_by_id(id: int):
              "receiver_id": row[4]
              }
             for row in rows]
+
+def create_message(receiver_id, text):
+    new_message = insert_query('INSERT INTO messages (receiver_id, text) VALUES (?, ?)', (receiver_id, text))
+    return {
+        "id": new_message["id"],
+        "receiver_id": receiver_id,
+        "text": text
+    }
