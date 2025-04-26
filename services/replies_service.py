@@ -31,3 +31,9 @@ def create_replies(text, user_id, topic_id):
         "user_id": user_id,
         "topic_id": topic_id
     }
+
+def vote_replies():
+    NotImplemented()
+
+def best_replies():
+    NotImplemented()
