@@ -2,6 +2,7 @@ from fastapi import APIRouter,HTTPException, Header
 from data.models import Topics,TopicCreate
 from services import topics_service
 from services.topics_service import get_all, get_by_id,create_topic
+from common.auth import get_user_or_raise_401
 
 topics_router = APIRouter(prefix='/topics')
 
@@ -19,10 +20,10 @@ def get_topic_by_id(id: int):
         return topic
     
     
-# @topics_router.post('/')
-# def create_topic(topic: TopicCreate,x_token: str = Header()):
-#     user = get_user_or_raise_401(x_token)
-#     return create_topic(topic,user[0])
+@topics_router.post('/')
+def create_topic_router(topic: TopicCreate,x_token: str = Header()):
+    user = get_user_or_raise_401(x_token)
+    return create_topic(topic,user.id)
     
     
 

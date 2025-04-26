@@ -1,6 +1,7 @@
 from data.database import read_query, insert_query
 from data.models import Users
 from datetime import datetime
+import bcrypt
 
 _SEPARATOR = ';'
 
@@ -37,19 +38,15 @@ def from_token(token: str) -> Users | None:
 
 
 def register_user(user_data: Users) -> Users:
-    insert_query(
-        '''INSERT INTO users (username, telephone_number, email, is_admin, password, date_registration)
-           VALUES (?, ?, ?, ?, ?, ?)''',
-        (
-            user_data.username,
+    hashed_password = bcrypt.hashpw(user_data.password.encode(), bcrypt.gensalt())
+    user_id = insert_query(
+        '''INSERT INTO users (username, telephone_number, email, password)
+           VALUES (?, ?, ?, ?)''',
+            (user_data.username,
             user_data.telephone_number,
             user_data.email,
-            user_data.is_admin,
-            user_data.password,
-            datetime.now()
-        )
-    )
-
-    return find_by_username(user_data.username)
+            hashed_password,))
+    user_data.id = user_id
+    return user_data
 
 

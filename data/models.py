@@ -3,11 +3,11 @@ from datetime import datetime
 
 
 class Users(BaseModel):
-    id: int = None
+    id: int | None = None
     username: str
     telephone_number: str
     email: str
-    is_admin: bool = False
+    is_admin: bool | None = False
     password: str
     date_registration: datetime = None
     
@@ -40,6 +40,7 @@ class CategoryHasUsers(BaseModel):
 class Topics(BaseModel):
     id: int
     title: str
+    text: str
     user_id: int
     category_id: int
     is_locked: int = 0
@@ -47,19 +48,21 @@ class Topics(BaseModel):
     best_reply_id: int = 0
 
     @classmethod
-    def from_query_result(cls, id, title, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0):
+    def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0):
         return cls(
             id=id,
             title=title,
+            text=text,
             user_id=user_id,
             category_id=category_id,
             is_locked=is_locked if is_locked is not None else 0,
             date_create=date_create or datetime.now(),
-            best_reply_id=best_reply_id)
+            best_reply_id=best_reply_id,)
         
         
 class TopicCreate(BaseModel):
     title: str
+    text:str
     category_id: int
     
 class Replies(BaseModel):
