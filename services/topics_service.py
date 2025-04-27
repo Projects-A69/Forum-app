@@ -4,15 +4,15 @@ from data.models import Topics, TopicCreate
 
 def get_all(search: str = None):
     if search is None:
-        data = read_query('''SELECT id,title,user_id,category_id,best_reply_id FROM topics''')
+        data = read_query('''SELECT id,title,text,user_id,category_id,best_reply_id FROM topics''')
     else:
-        data = read_query('''SELECT id,title,user_id,category_id,best_reply_id FROM topics WHERE title LIKE ?''', (f'%{search}%',))
+        data = read_query('''SELECT id,title,text,user_id,category_id,best_reply_id FROM topics WHERE title LIKE ?''', (f'%{search}%',))
         
     return (Topics.from_query_result(*row) for row in data)
 
 def get_by_id(id: int):
     data = read_query(
-        '''SELECT id, title, user_id, category_id, best_reply_id FROM topics 
+        '''SELECT id, title, text, user_id, category_id, best_reply_id FROM topics 
             WHERE id = ?''', (id,))
 
     return next((Topics.from_query_result(*row) for row in data), None)

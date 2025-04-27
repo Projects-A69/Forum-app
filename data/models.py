@@ -63,7 +63,7 @@ class Topics(BaseModel):
     user_id: int
     category_id: int
     is_locked: int = 0
-    date_create: datetime = datetime.now()
+    date_create: date = None
     best_reply_id: int = 0
 
     @classmethod
@@ -75,7 +75,7 @@ class Topics(BaseModel):
             user_id=user_id,
             category_id=category_id,
             is_locked=is_locked if is_locked is not None else 0,
-            date_create=date_create or datetime.now(),
+            date_create=date_create or date.today(),
             best_reply_id=best_reply_id,)
         
         
