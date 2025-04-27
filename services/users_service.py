@@ -15,6 +15,27 @@ def find_by_username(username: str) -> Users | None:
 
     return Users.from_query_result(*data[0])
 
+def find_by_email(email: str) -> Users | None:
+    data = read_query(
+        '''SELECT id, username, telephone_number, email, is_admin, password, date_registration 
+           FROM users WHERE email = ?''',
+        (email,))
+    if not data:
+        return None
+
+    return Users.from_query_result(*data[0])
+
+
+def find_by_telephone(telephone_number: str) -> Users | None:
+    data = read_query(
+        '''SELECT id, username, telephone_number, email, is_admin, password, date_registration 
+           FROM users WHERE telephone_number = ?''',
+        (telephone_number,))
+    if not data:
+        return None
+
+    return Users.from_query_result(*data[0])
+
 
 def create_token(user: Users) -> str:
     return f'{user.id}{_SEPARATOR}{user.username}'

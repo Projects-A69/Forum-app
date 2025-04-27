@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import date,datetime
 
 
 class Users(BaseModel):
@@ -9,7 +9,7 @@ class Users(BaseModel):
     email: str
     is_admin: bool | None = False
     password: str
-    date_registration: datetime = None
+    date_registration: date = None
     
     @classmethod
     def from_query_result(cls, id, username, telephone_number, email, is_admin=False, password='', date_registration=None):
@@ -20,7 +20,26 @@ class Users(BaseModel):
             email=email,
             is_admin=is_admin if is_admin is not None else False,
             password=password,
-            date_registration=date_registration or datetime.now())
+            date_registration=date_registration or date.today())
+        
+        
+class RegisterData(BaseModel):
+    username: str
+    telephone_number: str
+    email: str
+    password: str
+    
+class LoginData(BaseModel):
+    username: str
+    password: str
+
+class UserInfoResponse(BaseModel):
+    id: int
+    username: str
+    telephone_number: str
+    email: str
+    is_admin: bool
+    date_registration: date
 
 class Categories(BaseModel):
     id: int
@@ -98,6 +117,4 @@ class Messages(BaseModel):
 class MessagesCreate(BaseModel):
     receiver_id: int
     text:str
-
-
 
