@@ -9,4 +9,4 @@ messages_router = APIRouter(prefix='/messages')
 
 @messages_router.post('/create',)
 def create(message: MessagesCreate):
-    return create_message(message.receiver_id, message.text)
+    return create_message(message.sender_id, message.receiver_id, message.text)

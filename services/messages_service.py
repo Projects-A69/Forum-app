@@ -23,10 +23,11 @@ def get_by_id(id: int):
              }
             for row in rows]
 
-def create_message(receiver_id, text):
-    new_message = insert_query('INSERT INTO messages (receiver_id, text) VALUES (?, ?)', (receiver_id, text))
+def create_message(sender_id, receiver_id, text):
+    new_message = insert_query('INSERT INTO messages (sender_id, receiver_id, text) VALUES (?, ?, ?)', (sender_id, receiver_id, text))
     return {
-        "id": new_message["id"],
+        "id": new_message,
         "receiver_id": receiver_id,
+        "sender_id": sender_id,
         "text": text
     }
