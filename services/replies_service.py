@@ -1,5 +1,7 @@
 from data.database import read_query, insert_query, update_query
-from data.models import Replies
+from data.models import Replies, RepliesHasUsers, Users
+from models import reply_votes
+
 
 def get_all():
     rows = read_query('SELECT * FROM replies')
@@ -33,7 +35,16 @@ def create_replies(text, user_id, topic_id):
     }
 
 def vote_replies():
-    NotImplemented()
+    vote_reply = read_query('SELECT user_id, reply_id, vote_type FROM replies_has_users WHERE user_id = ? AND reply_id = ?', (user_id, reply_id))
+    if vote_reply:
+        insert_query('UPDATE replies_has_users SET vote_type = ? WHERE user_id = ? AND reply_id = ?', (vote_type, user_id, reply_votes))
+    else:
+        insert_query('INSERT INTO replies_has_users (user_id, reply_id, reply_type) VALUES (?, ?, ?)', (user_id, reply_id, vote_type))
+    return {
+        "user_id": user_id,
+        "reply_id": reply_id,
+        "vote_type": vote_type,
+    }
 
 def best_replies():
     NotImplemented()

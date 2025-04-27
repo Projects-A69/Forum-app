@@ -97,14 +97,13 @@ class RepliesCreate(BaseModel):
     user_id: int
     topic_id: int
 
-'''
 class RepliesHasUsers(BaseModel):
     replies_id: int
     users_id: int
     vote_type: bool = False
- 
+
 reply_votes: list[RepliesHasUsers] = []
-'''
+
 
 
 class Messages(BaseModel):

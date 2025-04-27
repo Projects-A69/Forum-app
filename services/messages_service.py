@@ -1,5 +1,5 @@
 from data.database import read_query, insert_query, update_query
-from data.models import Messages
+from data.models import Messages, Users
 
 def all():
     rows = read_query('SELECT * FROM messages')
@@ -43,13 +43,5 @@ def view_conversation(sender_id, receiver_id):
     for t in view_con
     ]
 
-def view_conversations(receiver_id):
-    conversation = read_query('SELECT m.*, u.username FROM messages m JOIN users u ON m.sender_id = u.id JOIN users r ON m.receiver_id = r.id WHERE m.sender_id = ? OR m.receiver_id = ? ORDER BY m.created_at DESC', (receiver_id, receiver_id))
-    return [
-        {
-        'username': t[3],
-        'message': t[0],
-        'date': t[1]
-    }
-        for t in conversation
-    ]
+def view_conversations(id: Users):
+    all_conversation = read_query('SELECT DICTINCT u.id, u.username FROM users u JOIN (SELECT CASE)', (receiver_id, sender_id))
