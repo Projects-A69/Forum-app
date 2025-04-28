@@ -55,34 +55,6 @@ class CategoryHasUsers(BaseModel):
     users_id: int
     acess_level: bool = False
 '''
-
-class Topics(BaseModel):
-    id: int
-    title: str
-    text: str
-    user_id: int
-    category_id: int
-    is_locked: int = 0
-    date_create: date = None
-    best_reply_id: int = 0
-
-    @classmethod
-    def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0):
-        return cls(
-            id=id,
-            title=title,
-            text=text,
-            user_id=user_id,
-            category_id=category_id,
-            is_locked=is_locked if is_locked is not None else 0,
-            date_create=date_create or date.today(),
-            best_reply_id=best_reply_id,)
-        
-        
-class TopicCreate(BaseModel):
-    title: str
-    text:str
-    category_id: int
     
 class Replies(BaseModel):
     id:int
@@ -92,10 +64,52 @@ class Replies(BaseModel):
     user_id: int
     topic_id: int
 
+    @classmethod
+    def from_query_result(cls, id, text, date_create, date_update, user_id, topic_id):
+        return cls(
+            id=id,
+            text=text,
+            date_create=date_create,
+            date_update=date_update,
+            user_id=user_id,
+            topic_id=topic_id
+        )
+
+
 class RepliesCreate(BaseModel):
     text: str
     user_id: int
     topic_id: int
+    
+class Topics(BaseModel):
+    id: int
+    title: str
+    text: str
+    user_id: int
+    category_id: int
+    is_locked: int = 0
+    date_create: date = None
+    best_reply_id: int = 0
+    replies: list[Replies] = []
+
+    @classmethod
+    def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0,replies = None):
+        return cls(
+            id=id,
+            title=title,
+            text=text,
+            user_id=user_id,
+            category_id=category_id,
+            is_locked=is_locked if is_locked is not None else 0,
+            date_create=date_create or date.today(),
+            best_reply_id=best_reply_id,
+            replies = replies or [])
+        
+        
+class TopicCreate(BaseModel):
+    title: str
+    text:str
+    category_id: int
 
 class RepliesHasUsers(BaseModel):
     replies_id: int
