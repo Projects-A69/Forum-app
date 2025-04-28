@@ -7,7 +7,7 @@ from common.auth import get_user_or_raise_401
 topics_router = APIRouter(prefix='/topics')
 
 @topics_router.get('/')
-def get_topics(search: str | None = None):
+def get_topics(search: str | None = None,sort:str | None = None):
     return get_all(search)
 
 @topics_router.get('/{id}')

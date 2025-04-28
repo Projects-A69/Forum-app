@@ -1,6 +1,6 @@
 from data.database import read_query, insert_query, update_query
 from data.models import Replies, RepliesHasUsers, Users
-from models import reply_votes
+from data.models import reply_votes
 
 
 def get_all():

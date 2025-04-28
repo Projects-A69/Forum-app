@@ -2,13 +2,39 @@ from data.database import read_query,insert_query
 from data.models import Topics, TopicCreate,Replies
 
 
-def get_all(search: str = None):
+def get_all(search: str = None, sort: str = None):
     if search is None:
-        data = read_query('''SELECT id,title,text,user_id,category_id,best_reply_id FROM topics''')
+        data = read_query('''
+            SELECT id, title, text, user_id, category_id, best_reply_id, date_created
+            FROM topics
+        ''')
     else:
-        data = read_query('''SELECT id,title,text,user_id,category_id,best_reply_id FROM topics WHERE title LIKE ?''', (f'%{search}%',))
+        data = read_query('''
+            SELECT id, title, text, user_id, category_id, best_reply_id, date_created
+            FROM topics
+            WHERE title LIKE ?
+        ''', (f'%{search}%',))
+
+    topics = []
+    for row in data:
+        topic = Topics.from_query_result(*row)
         
-    return (Topics.from_query_result(*row) for row in data)
+        replies_data = read_query(
+            '''SELECT COUNT(*) FROM replies WHERE topic_id = ?''', (topic.id,)
+        )
+        replies_count = replies_data[0][0]
+
+        topic.replies = replies_count
+
+        topics.append(topic)
+
+    if sort == 'asc':
+        return sorted(topics, key=lambda t: t.date_create)
+    elif sort == 'desc':
+        return sorted(topics, key=lambda t: t.date_create, reverse=True)
+    else:
+        return topics
+
 
 def get_by_id(id: int):
     data = read_query(

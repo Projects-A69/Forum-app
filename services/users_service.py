@@ -1,9 +1,15 @@
+from annotated_types import T
 from data.database import read_query, insert_query
 from data.models import Users
-from datetime import datetime
+from datetime import datetime,timedelta,timezone
+from jose import jwt
 import bcrypt
 
-_SEPARATOR = ';'
+# _SEPARATOR = ';'
+
+SECRET_KEY = "123"
+ALGORITHM = "HS256"
+TOKEN_EXPIRATION_TIME = 60
 
 def find_by_username(username: str) -> Users | None:
     data = read_query(
@@ -15,49 +21,32 @@ def find_by_username(username: str) -> Users | None:
 
     return Users.from_query_result(*data[0])
 
-def find_by_email(email: str) -> Users | None:
-    data = read_query(
-        '''SELECT id, username, telephone_number, email, is_admin, password, date_registration 
-           FROM users WHERE email = ?''',
-        (email,))
-    if not data:
-        return None
-
-    return Users.from_query_result(*data[0])
-
-
-def find_by_telephone(telephone_number: str) -> Users | None:
-    data = read_query(
-        '''SELECT id, username, telephone_number, email, is_admin, password, date_registration 
-           FROM users WHERE telephone_number = ?''',
-        (telephone_number,))
-    if not data:
-        return None
-
-    return Users.from_query_result(*data[0])
-
 
 def create_token(user: Users) -> str:
-    return f'{user.id}{_SEPARATOR}{user.username}'
-
+    payload = {
+        "user_id": user.id,
+        "username": user.username,
+        "exp": datetime.now(timezone.utc)+ timedelta(minutes = TOKEN_EXPIRATION_TIME)
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 def is_authenticated(token: str) -> bool:
     try:
-        user_id, username = token.split(_SEPARATOR)
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("username")
         user = find_by_username(username)
-        return user is not None and str(user.id) == user_id
+        return user is not None and str(user.id) == str(payload.get("user_id"))
     except Exception:
         return False
 
-
 def from_token(token: str) -> Users | None:
     try:
-        _, username = token.split(_SEPARATOR)
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("username")
         return find_by_username(username)
     except Exception:
         return None
-
-
+    
 def register_user(user_data: Users) -> Users:
     hashed_password = bcrypt.hashpw(user_data.password.encode(), bcrypt.gensalt())
     user_id = insert_query(
@@ -70,4 +59,22 @@ def register_user(user_data: Users) -> Users:
     user_data.id = user_id
     return user_data
 
+# def create_token(user: Users) -> str:
+#     return f'{user.id}{_SEPARATOR}{user.username}'
 
+
+# def is_authenticated(token: str) -> bool:
+#     try:
+#         user_id, username = token.split(_SEPARATOR)
+#         user = find_by_username(username)
+#         return user is not None and str(user.id) == user_id
+#     except Exception:
+#         return False
+
+
+# def from_token(token: str) -> Users | None:
+#     try:
+#         _, username = token.split(_SEPARATOR)
+#         return find_by_username(username)
+#     except Exception:
+#         return None
