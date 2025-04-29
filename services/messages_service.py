@@ -43,5 +43,25 @@ def view_conversation(sender_id, receiver_id):
     for t in view_con
     ]
 
-def view_conversations(id: Users):
-    all_conversation = read_query('SELECT DICTINCT u.id, u.username FROM users u JOIN (SELECT CASE)', (receiver_id, sender_id))
+def view_conversations(id):
+    all_chats = read_query('SELECT * FROM messages WHERE sender_id = ? OR receiver_id = ? ', (id, id))
+    all_users = set()
+    for chat in all_chats:
+        sender_id = chat[0]
+        receiver_id = chat[1]
+        if sender_id == id:
+            all_users.add(receiver_id)
+        if receiver_id == id:
+            all_users.add(sender_id)
+    if all_users:
+        placeholders_users = ', '.join(['?'] * len(all_users))
+        q_users = f'SELECT id, username FROM users WHERE id in ({placeholders_users})'
+        users = read_query(q_users, tuple(all_users))
+        return [{
+            'user_id': c[0],
+            'username': c[1]
+            }
+        for c in users
+            ]
+    else:
+        return []
