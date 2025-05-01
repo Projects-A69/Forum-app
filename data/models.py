@@ -124,19 +124,6 @@ class TopicCreate(BaseModel):
     text:str
     category_id: int
 
-#class TopicHasUsers(BaseModel):
-#    topic_id: int
-#    users_id: int
-#    vote_type: bool = False
-
-
-    
-'''
-class CategoryHasUsers(BaseModel):
-    categories_id: int
-    users_id: int
-    acess_level: bool = False
-'''
     
 class Replies(BaseModel):
     id:int
@@ -154,8 +141,7 @@ class Replies(BaseModel):
             date_create=date_create,
             date_update=date_update,
             user_id=user_id,
-            topic_id=topic_id
-        )
+            topic_id=topic_id)
 
 
 class RepliesCreate(BaseModel):

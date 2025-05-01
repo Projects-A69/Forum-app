@@ -4,28 +4,21 @@ from data.models import Topics, TopicCreate,Replies
 
 def get_all(search: str = None, sort: str = None):
     if search is None:
-        data = read_query('''
-            SELECT id, title, text, user_id, category_id, best_reply_id, date_created
-            FROM topics
-        ''')
+        data = read_query('''SELECT id, title, text, user_id, category_id, best_reply_id, date_created
+            FROM topics''')
     else:
-        data = read_query('''
-            SELECT id, title, text, user_id, category_id, best_reply_id, date_created
+        data = read_query('''SELECT id, title, text, user_id, category_id, best_reply_id, date_created
             FROM topics
-            WHERE title LIKE ?
-        ''', (f'%{search}%',))
+            WHERE title LIKE ?''', (f'%{search}%',))
 
     topics = []
     for row in data:
         topic = Topics.from_query_result(*row)
         
-        replies_data = read_query(
-            '''SELECT COUNT(*) FROM replies WHERE topic_id = ?''', (topic.id,)
-        )
-        replies_count = replies_data[0][0]
-
-        topic.replies = replies_count
-
+        replies_data = read_query('''SELECT id, text, date_created, date_updated, user_id, topic_id
+            FROM replies
+            WHERE topic_id = ?''', (topic.id,))
+        topic.replies = [Replies.from_query_result(*reply_row) for reply_row in replies_data]
         topics.append(topic)
 
     if sort == 'asc':
@@ -37,16 +30,14 @@ def get_all(search: str = None, sort: str = None):
 
 
 def get_by_id(id: int):
-    data = read_query(
-        '''SELECT id, title, text, user_id, category_id, best_reply_id
+    data = read_query('''SELECT id, title, text, user_id, category_id, best_reply_id
            FROM topics WHERE id = ?''', (id,))
 
     topic_row = next((row for row in data), None)
     if not topic_row:
         return None
 
-    replies_data = read_query(
-        '''SELECT id, text, date_created, date_updated, user_id, topic_id 
+    replies_data = read_query('''SELECT id, text, date_created, date_updated, user_id, topic_id 
            FROM replies WHERE topic_id = ?''', (id,))
 
     replies = [Replies(
@@ -69,3 +60,58 @@ def create_topic(topic: TopicCreate, user_id: int):
            FROM topics WHERE id = ?''',(new_id,))
 
     return next((Topics.from_query_result(*row) for row in data), None)
+
+
+def lock_topic(topic_id: int) -> bool:
+    topic = get_by_id(topic_id)
+    if topic is None:
+        return None
+
+    insert_query('''UPDATE topics SET is_locked = 1 WHERE id = ?''', (topic_id,))
+
+    updated = read_query('''SELECT id, title, description, user_id, is_locked, best_reply_id 
+           FROM topics 
+           WHERE id = ?''', (topic_id,))
+
+    return Topics.from_query_result(*updated[0]) if updated else None
+
+
+def choose_best_reply(topic_id: int, reply_id: int, user_id: int) -> str | None:
+    topic = get_by_id(topic_id)
+    if topic is None:
+        return "topic_not_found"
+
+    if topic.user_id != user_id:
+        return "not_author"
+
+    reply_check = read_query('''SELECT id FROM replies WHERE id = ? AND topic_id = ?''', (reply_id, topic_id))
+    if not reply_check:
+        return "reply_not_found"
+
+    insert_query('''UPDATE topics SET best_reply_id = ? WHERE id = ?''', (reply_id, topic_id))
+    
+    return get_topic_with_replies(topic_id)
+
+
+def get_topic_with_replies(topic_id: int) -> Topics | None:
+    data = read_query('''SELECT id, title, text, user_id, category_id, is_locked, date_created, best_reply_id
+        FROM topics
+        WHERE id = ?''', (topic_id,))
+
+    if not data:
+        return None
+
+    topic = Topics.from_query_result(*data[0])
+
+    replies_data = read_query('''SELECT id, text, date_created, date_updated, user_id, topic_id
+        FROM replies
+        WHERE topic_id = ?
+        ORDER BY date_created  # Optional: Sort by newest/oldest''', (topic_id,))
+
+    topic.replies = [Replies.from_query_result(*row) for row in replies_data]
+
+    return topic
+
+    
+    
+    
