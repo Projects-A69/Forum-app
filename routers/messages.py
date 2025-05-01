@@ -9,7 +9,7 @@ from routers.categories import categories_router
 
 messages_router = APIRouter(prefix='/messages', tags=['Messages'])
 
-@messages_router.post('/create',)
+@messages_router.post('/',)
 def create(message: MessageCreate, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
     if message.sender_id != user.id:
