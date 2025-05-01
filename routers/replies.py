@@ -13,7 +13,3 @@ def create(reply: ReplyCreate, x_token: str = Header()):
 def vote_reply(vote_reply: RepliesHasUsers, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
     return vote_replies(users_id = vote_reply.users_id, replies_id=vote_reply.replies_id, vote_type=vote_reply.vote_type)
-
-@replies_router.get('/replies/{replies_id}')
-def get_vote(replies_id: int):
-    return get_vote_reply(replies_id)

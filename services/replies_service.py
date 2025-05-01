@@ -40,11 +40,7 @@ def vote_replies(users_id, replies_id, vote_type):
         insert_query('UPDATE replies_has_votes SET vote_type = ? WHERE users_id = ? AND replies_id = ?',(vote_type, users_id, replies_id))
     else:
         insert_query('INSERT INTO replies_has_votes (users_id, replies_id, vote_type) VALUES (?, ?, ?)', (users_id, replies_id, vote_type))
-    return {
-        "user_id": users_id,
-        "reply_id": replies_id,
-        "vote_type": vote_type,
-    }
+    return get_vote_reply(replies_id)
 
 def get_vote_reply(replies_id: int):
     result = read_query('SELECT (SELECT COUNT(*) FROM replies_has_votes WHERE replies_id = ? AND vote_type = 1) AS likes, (SELECT COUNT(*) FROM replies_has_votes WHERE replies_id = ? AND vote_type = 0)', (replies_id, replies_id))
