@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from datetime import date,datetime
 
 
-class Users(BaseModel):
+class User(BaseModel):
     id: int | None = None
     username: str
     telephone_number: str
@@ -44,7 +44,7 @@ class UserInfoResponse(BaseModel):
     date_registration: date
 
 
-class Categories(BaseModel):
+class Category(BaseModel):
     id: int
     name: str
     info: str
@@ -63,7 +63,7 @@ class Categories(BaseModel):
             is_locked=is_locked if is_locked is not None else False)
 
     
-class Replies(BaseModel):
+class Reply(BaseModel):
     id:int
     text: str
     date_create: datetime = None
@@ -83,12 +83,12 @@ class Replies(BaseModel):
         )
 
 
-class RepliesCreate(BaseModel):
+class ReplyCreate(BaseModel):
     text: str
     user_id: int
     topic_id: int
     
-class Topics(BaseModel):
+class Topic(BaseModel):
     id: int
     title: str
     text: str
@@ -97,7 +97,7 @@ class Topics(BaseModel):
     is_locked: int = 0
     date_create: date = None
     best_reply_id: int = 0
-    replies: list[Replies] = []
+    replies: list[Reply] = []
 
     @classmethod
     def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0,replies = None):
@@ -125,7 +125,7 @@ class TopicCreate(BaseModel):
     category_id: int
 
     
-class Replies(BaseModel):
+class Reply(BaseModel):
     id:int
     text: str
     date_create: datetime = None
@@ -144,12 +144,12 @@ class Replies(BaseModel):
             topic_id=topic_id)
 
 
-class RepliesCreate(BaseModel):
+class ReplyCreate(BaseModel):
     text: str
     user_id: int
     topic_id: int
     
-class Topics(BaseModel):
+class Topic(BaseModel):
     id: int
     title: str
     text: str
@@ -158,7 +158,7 @@ class Topics(BaseModel):
     is_locked: int = 0
     date_create: date = None
     best_reply_id: int = 0
-    replies: list[Replies] = []
+    replies: list[Reply] = []
 
     @classmethod
     def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0,replies = None):
@@ -189,7 +189,7 @@ class RepliesHasUsers(BaseModel):
 reply_votes: list[RepliesHasUsers] = []
 
 
-class Messages(BaseModel):
+class Message(BaseModel):
     id: int
     sender_id : int
     text :str
@@ -206,7 +206,7 @@ class Messages(BaseModel):
             receiver_id=reciever_id)
 
 
-class MessagesCreate(BaseModel):
+class MessageCreate(BaseModel):
     sender_id: int
     receiver_id: int
     text:str

@@ -1,5 +1,5 @@
 from data.database import read_query,insert_query
-from data.models import Topics, TopicCreate,Replies
+from data.models import Topic, TopicCreate,Reply
 
 
 def get_all(search: str = None, sort: str = None):
@@ -13,12 +13,12 @@ def get_all(search: str = None, sort: str = None):
 
     topics = []
     for row in data:
-        topic = Topics.from_query_result(*row)
+        topic = Topic.from_query_result(*row)
         
         replies_data = read_query('''SELECT id, text, date_created, date_updated, user_id, topic_id
             FROM replies
             WHERE topic_id = ?''', (topic.id,))
-        topic.replies = [Replies.from_query_result(*reply_row) for reply_row in replies_data]
+        topic.replies = [Reply.from_query_result(*reply_row) for reply_row in replies_data]
         topics.append(topic)
 
     if sort == 'asc':
@@ -40,7 +40,7 @@ def get_by_id(id: int):
     replies_data = read_query('''SELECT id, text, date_created, date_updated, user_id, topic_id 
            FROM replies WHERE topic_id = ?''', (id,))
 
-    replies = [Replies(
+    replies = [Reply(
         id=row[0],
         text=row[1],
         date_create=row[2],
@@ -49,7 +49,7 @@ def get_by_id(id: int):
         topic_id=row[5]
     ) for row in replies_data]
 
-    return Topics.from_query_result(*topic_row, replies=replies)
+    return Topic.from_query_result(*topic_row, replies=replies)
 
     
 def create_topic(topic: TopicCreate, user_id: int):
@@ -59,7 +59,7 @@ def create_topic(topic: TopicCreate, user_id: int):
     data = read_query('''SELECT id, title,text, user_id, category_id, best_reply_id 
            FROM topics WHERE id = ?''',(new_id,))
 
-    return next((Topics.from_query_result(*row) for row in data), None)
+    return next((Topic.from_query_result(*row) for row in data), None)
 
 
 def lock_topic(topic_id: int) -> bool:
@@ -73,7 +73,7 @@ def lock_topic(topic_id: int) -> bool:
            FROM topics 
            WHERE id = ?''', (topic_id,))
 
-    return Topics.from_query_result(*updated[0]) if updated else None
+    return Topic.from_query_result(*updated[0]) if updated else None
 
 
 def choose_best_reply(topic_id: int, reply_id: int, user_id: int) -> str | None:
@@ -93,7 +93,7 @@ def choose_best_reply(topic_id: int, reply_id: int, user_id: int) -> str | None:
     return get_topic_with_replies(topic_id)
 
 
-def get_topic_with_replies(topic_id: int) -> Topics | None:
+def get_topic_with_replies(topic_id: int) -> Topic | None:
     data = read_query('''SELECT id, title, text, user_id, category_id, is_locked, date_created, best_reply_id
         FROM topics
         WHERE id = ?''', (topic_id,))
@@ -101,14 +101,14 @@ def get_topic_with_replies(topic_id: int) -> Topics | None:
     if not data:
         return None
 
-    topic = Topics.from_query_result(*data[0])
+    topic = Topic.from_query_result(*data[0])
 
     replies_data = read_query('''SELECT id, text, date_created, date_updated, user_id, topic_id
         FROM replies
         WHERE topic_id = ?
         ORDER BY date_created  # Optional: Sort by newest/oldest''', (topic_id,))
 
-    topic.replies = [Replies.from_query_result(*row) for row in replies_data]
+    topic.replies = [Reply.from_query_result(*row) for row in replies_data]
 
     return topic
 

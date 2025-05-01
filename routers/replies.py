@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from services.replies_service import create_replies, vote_replies, get_vote_reply
-from data.models import Replies, RepliesCreate, RepliesHasUsers
+from data.models import Reply, ReplyCreate, RepliesHasUsers
 replies_router = APIRouter(prefix='/replies')
 
 @replies_router.post('/create')
-def create(reply: RepliesCreate):
+def create(reply: ReplyCreate):
     return create_replies(reply.text, reply.user_id, reply.topic_id)
 
 @replies_router.post('/votes')

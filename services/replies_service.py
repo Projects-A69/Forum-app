@@ -1,5 +1,5 @@
 from data.database import read_query, insert_query, update_query
-from data.models import Replies, RepliesHasUsers, Users
+from data.models import Reply, RepliesHasUsers, User
 from data.models import reply_votes
 
 

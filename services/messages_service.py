@@ -1,5 +1,5 @@
 from data.database import read_query, insert_query, update_query
-from data.models import Messages, Users
+from data.models import Message, User
 
 def all():
     rows = read_query('SELECT * FROM messages')

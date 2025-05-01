@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Header
 from common.auth import get_user_or_raise_401
 from common.responses import BadRequest
-from data.models import LoginData, RegisterData,Users
+from data.models import LoginData, RegisterData,User
 from services import users_service
 import bcrypt
 
@@ -42,7 +42,7 @@ def register(data: RegisterData):
     if users_service.find_by_telephone(data.telephone_number):
         return BadRequest(f"Phone number '{data.telephone_number}' is already used. Please use a different number or login.")
 
-    user_data = Users(
+    user_data = User(
         username=data.username,
         telephone_number=data.telephone_number,
         email=data.email,
