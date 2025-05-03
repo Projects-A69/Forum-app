@@ -1,7 +1,7 @@
-from data.database import read_query, insert_query
+from data.database import read_query, insert_query, update_query
 from data.models import Category, CategoryCreate
+from services.users_service import is_authenticated, from_token
 from common.auth import get_user_or_raise_401
-
 
 def get_all(search: str = None):
     if search is None:
@@ -23,7 +23,6 @@ def get_by_id(id: int):
 
 def create_category(category: CategoryCreate, token: str):
     get_user_or_raise_401(token)
-
     if not category.name or category.name.strip() == "":
         raise ValueError("Category name is required.")
 
@@ -65,3 +64,28 @@ def view_category(id: int, search: str = None, sort_by: str = "date_created", or
 def view_categories():
     data = read_query('''SELECT id, name, info, is_private, date_created, is_locked FROM categories''')
     return [Category.from_query_result(*row) for row in data]
+
+
+def lock_category(category_id: int, token: str) -> bool:
+    user = get_user_or_raise_401(token)
+
+    if not user.is_admin:
+        raise ValueError("Admin access required to lock a category.")
+
+    if category_id is None:
+        raise ValueError("Category ID is required.")
+
+    category = get_by_id(category_id)
+    if category is None:
+        return False
+
+    if category.is_locked:
+        return True
+    
+    updated_rows = update_query('''UPDATE categories SET is_locked = 1 WHERE id = ?''',(category_id,))
+
+    if updated_rows > 0:
+        return True
+    else:
+        raise ValueError("Failed to lock the category due to a database error.")
+
