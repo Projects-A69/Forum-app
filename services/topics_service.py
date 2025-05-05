@@ -53,6 +53,18 @@ def get_by_id(id: int):
 
     
 def create_topic(topic: TopicCreate, user_id: int):
+    category_data = read_query(
+        '''SELECT is_locked FROM categories WHERE id = ?''',
+        (topic.category_id,)
+    )
+
+    if not category_data:
+        return "category_not_found"
+
+    is_locked = category_data[0][0]
+    if is_locked:
+        return "category_locked"
+
     new_id = insert_query('''INSERT INTO topics (title,text, user_id, category_id) VALUES (?, ?, ?, ?)''',
         (topic.title,topic.text, user_id, topic.category_id))
 
@@ -111,7 +123,3 @@ def get_topic_with_replies(topic_id: int) -> Topic | None:
     topic.replies = [Reply.from_query_result(*row) for row in replies_data]
 
     return topic
-
-    
-    
-    

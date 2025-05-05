@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header,Response
 from common.auth import get_user_or_raise_401
-from common.responses import BadRequest
+from common.responses import BadRequest,Unauthorized,NotFound
 from data.models import LoginData, RegisterData,User
 from services import users_service
 import bcrypt
@@ -46,9 +46,24 @@ def register(data: RegisterData):
         username=data.username,
         telephone_number=data.telephone_number,
         email=data.email,
-        password=data.password
-    )
+        password=data.password)
 
     user = users_service.register_user(user_data)
-    return {'message': f"User '{user.username}' registered successfully"}
+    return Response(status_code=200, content = f"User '{user.username}' registered successfully")
+
+@users_router.put("/{user_id}/admin")
+def promote_to_admin(user_id: int, x_token: str = Header()):
+    user = users_service.from_token(x_token)
+    if not user:
+        return Unauthorized("Invalid or missing token.")
+
+    result = users_service.make_user_admin(user, user_id)
+
+    if result is False:
+        return BadRequest("Only admins can promote users to admin.")
+    elif result is None:
+        return NotFound(f"User with ID {user_id} not found.")
+
+    return Response(status_code=200, content=f"User with ID {user_id} is now an admin.")
+
 
