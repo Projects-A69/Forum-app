@@ -117,7 +117,8 @@ class CategoryCreate(BaseModel):
     name: str
     info:str
     date_created: datetime = None
-
+    is_private: int = 0
+    is_locked: int = 0
 
 class TopicCreate(BaseModel):
     title: str
