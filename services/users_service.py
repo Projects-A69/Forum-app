@@ -1,4 +1,4 @@
-from data.database import read_query, insert_query
+from data.database import read_query, insert_query,update_query
 from data.models import User
 from datetime import datetime,timedelta,timezone
 from jose import jwt
@@ -48,3 +48,14 @@ def register_user(user_data: User) -> User:
            VALUES (?, ?, ?, ?)''',(user_data.username,user_data.telephone_number,user_data.email,hashed_password,))
     user_data.id = user_id
     return user_data
+
+def make_user_admin(requesting_user: User, target_user_id: int) -> bool | None:
+    if not requesting_user.is_admin:
+        return False
+
+    user = read_query("SELECT id FROM users WHERE id = ?", (target_user_id,))
+    if not user:
+        return None
+
+    update_query("UPDATE users SET is_admin = 1 WHERE id = ?", (target_user_id,))
+    return True
