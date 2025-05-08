@@ -10,9 +10,9 @@ messages_router = APIRouter(prefix='/messages', tags=['Messages'])
 def create_message(message: MessageCreate, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
     if message.sender_id != user.id:
-        raise HTTPException(status_code= 401, detail='Sender ID not found')
+        raise HTTPException(status_code= 401,detail='Sender ID not found')
     if message.receiver_id != user.id:
-        raise HTTPException(status_code= 401, detail='Receiver ID not found')
+        raise HTTPException(status_code= 401,detail='Receiver ID not found')
 
 
 @messages_router.get('/users/user_id')
