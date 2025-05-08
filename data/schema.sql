@@ -38,17 +38,17 @@ AUTO_INCREMENT = 2;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `forum_team`.`users` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `first_name` VARCHAR(45) NOT NULL,
-  `last_name` VARCHAR(45) NOT NULL,
+  `username` VARCHAR(45) NOT NULL,
   `telephone_number` VARCHAR(20) NOT NULL,
   `email` VARCHAR(100) NOT NULL,
   `is_admin` TINYINT(1) NULL DEFAULT 0,
   `password` VARCHAR(100) NOT NULL,
   `date_registration` DATE NULL DEFAULT CURRENT_TIMESTAMP(),
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `email` (`email` ASC) VISIBLE)
+  UNIQUE INDEX `email` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `telephone_number_UNIQUE` (`telephone_number` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 2;
+AUTO_INCREMENT = 5;
 
 
 -- -----------------------------------------------------
@@ -104,12 +104,12 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `forum_team`.`topics` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255) NOT NULL,
+  `text` MEDIUMTEXT NOT NULL,
   `user_id` INT(10) UNSIGNED NOT NULL,
   `category_id` INT(11) NOT NULL,
   `is_locked` TINYINT(1) NULL DEFAULT 0,
   `date_created` DATE NULL DEFAULT CURRENT_TIMESTAMP(),
   `best_reply_id` INT(11) NULL DEFAULT NULL,
-  `text` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `user_id` (`user_id` ASC) VISIBLE,
   INDEX `category_id` (`category_id` ASC) VISIBLE,
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `forum_team`.`topics` (
     FOREIGN KEY (`category_id`)
     REFERENCES `forum_team`.`categories` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2;
+AUTO_INCREMENT = 6;
 
 
 -- -----------------------------------------------------

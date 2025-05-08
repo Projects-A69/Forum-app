@@ -1,5 +1,7 @@
 from data.database import read_query,insert_query
 from data.models import Topic, TopicCreate,Reply
+from services.category_access_service import has_access
+
 
 
 def get_all(search: str = None, sort: str = None):
@@ -53,10 +55,16 @@ def get_by_id(id: int):
 
     
 def create_topic(topic: TopicCreate, user_id: int):
-    category_data = read_query(
-        '''SELECT is_locked FROM categories WHERE id = ?''',
-        (topic.category_id,)
-    )
+    category = read_query('''SELECT is_private FROM categories WHERE id = ?''', (topic.category_id,))
+    if not category:
+        return "category_not_found"
+    
+    if category[0][0]:
+        if not has_access(user_id, topic.category_id, 1):
+            return "no_write_access"
+        
+    category_data = read_query('''SELECT is_locked FROM categories WHERE id = ?''',
+        (topic.category_id,))
 
     if not category_data:
         return "category_not_found"

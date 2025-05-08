@@ -5,8 +5,7 @@ from common.auth import get_user_or_raise_401
 
 
 
-categories_router = APIRouter(prefix='/categories', tags=['CATEGORIES'])
-
+categories_router = APIRouter(prefix='/api/categories',tags=['Categories'])
 
 @categories_router.get('/')
 def get_categories(search: str | None = None):

@@ -212,4 +212,10 @@ class MessageCreate(BaseModel):
     receiver_id: int
     text:str
 
+class CategoryAccess(BaseModel):
+    categories_id: int
+    users_id: int
+    access_level: int
 
+class CategoryAccessUpdate(BaseModel):
+    access_level: int
