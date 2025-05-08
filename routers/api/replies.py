@@ -4,7 +4,7 @@ from services.replies_service import create_replies, vote_replies
 from services.topics_service import lock_topic, get_by_id
 from data.models import Reply, ReplyCreate, RepliesHasUsers
 
-replies_router = APIRouter(prefix='/replies', tags=['Replies'])
+replies_router = APIRouter(prefix='/api/replies', tags=['Replies'])
 
 
 @replies_router.post('/{topic_id}/replies')

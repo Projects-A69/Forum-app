@@ -3,11 +3,15 @@ from data.models import TopicCreate
 from services.topics_service import get_all, get_by_id,create_topic,lock_topic,choose_best_reply
 from common.auth import get_user_or_raise_401
 
-topics_router = APIRouter(prefix='/topics', tags=['TOPICS'])
+topics_router = APIRouter(prefix='/api/topics', tags=['TOPICS'])
 
 @topics_router.get('/')
-def get_topics(search: str | None = None,sort:str | None = None):
-    return get_all(search)
+def get_topics(search: str | None = None, sort: str | None = None):
+    if sort not in (None, 'asc', 'desc'):
+        raise HTTPException(status_code=400, detail="Invalid sort value. Use 'asc' or 'desc'.")
+    return get_all(search, sort)
+
+
 
 @topics_router.get('/{id}')
 def get_topic_by_id(id: int):

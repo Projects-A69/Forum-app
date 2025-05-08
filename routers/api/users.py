@@ -5,7 +5,7 @@ from data.models import LoginData, RegisterData,User
 from services import users_service
 import bcrypt
 
-users_router = APIRouter(prefix='/users',tags=['USERS'])
+users_router = APIRouter(prefix='/api/users',tags=['USERS'])
 
 
 @users_router.post('/login')

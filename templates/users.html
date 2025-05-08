@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Users</h2>
+
+<section>
+    <h3>Register</h3>
+    <form method="post" action="/users/register">
+        <label>Username: <input type="text" name="username" required></label><br>
+        <label>Email: <input type="email" name="email" required></label><br>
+        <label>Phone: <input type="text" name="telephone_number" required></label><br>
+        <label>Password: <input type="password" name="password" required></label><br>
+        <button type="submit">Register</button>
+    </form>
+</section>
+
+<section>
+    <h3>Login</h3>
+    <form method="post" action="/users/login">
+        <label>Username: <input type="text" name="username" required></label><br>
+        <label>Password: <input type="password" name="password" required></label><br>
+        <button type="submit">Login</button>
+    </form>
+</section>
+
+<section>
+    <h3>User Info (via Token)</h3>
+    <form method="get" action="/users/info">
+        <label>Token: <input type="text" name="x_token" required></label><br>
+        <button type="submit">Get Info</button>
+    </form>
+</section>
+
+{% endblock %}

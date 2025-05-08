@@ -3,7 +3,7 @@ from data.models import Message, MessageCreate
 from services.messages_service import create_message, view_conversation, view_conversations
 from fastapi import APIRouter, HTTPException, Header
 
-messages_router = APIRouter(prefix='/messages', tags=['Messages'])
+messages_router = APIRouter(prefix='/api/messages', tags=['Messages'])
 
 
 @messages_router.post('/',)
