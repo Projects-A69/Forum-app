@@ -36,12 +36,6 @@ def register(data: RegisterData):
     if users_service.find_by_username(data.username):
         return BadRequest(f"Username '{data.username}' is already taken. Please choose another one or login.")
 
-    if users_service.find_by_email(data.email):
-        return BadRequest(f"Email '{data.email}' is already registered. Please use a different email address or login.")
-
-    if users_service.find_by_telephone(data.telephone_number):
-        return BadRequest(f"Phone number '{data.telephone_number}' is already used. Please use a different number or login.")
-
     user_data = User(
         username=data.username,
         telephone_number=data.telephone_number,
