@@ -34,7 +34,6 @@ class MessageRouterTest(unittest.TestCase):
             mock_get_user.return_value = self.user
             with self.assertRaises(HTTPException) as context:
                 create_message(message=message, x_token=self.token)
-            print("после вызова")
             self.assertEqual(context.exception.status_code, 401)
             self.assertEqual(context.exception.detail,'Sender ID not found')
 
