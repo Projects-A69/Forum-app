@@ -17,6 +17,10 @@ def get_by_id(id: int):
     data = read_query(
         '''SELECT id,name,info,is_private,date_created,is_locked FROM categories 
             WHERE id = ?''', (id,))
+    
+    # if data[0].is_private:
+    #     if user_id and not has_access(user_id, id, 0): 
+    #         return None
 
     return next((Category.from_query_result(*row) for row in data), None)
 

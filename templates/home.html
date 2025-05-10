@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Welcome to the Forum</h1>
-<p>This is the homepage.</p>
+<div class="welcome-container">
+    <h1>Welcome to ForumApp</h1>
+    <p>Join our community to start discussing</p>
+    
+    <div class="auth-buttons">
+        <a href="/users/register" class="auth-button register">Register</a>
+        <a href="/users/login" class="auth-button login">Login</a>
+    </div>
+</div>
 {% endblock %}

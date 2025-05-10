@@ -2,19 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum App</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>Forum App</h1>
-        <nav>
-            <a href="/">Home</a>
-            <a href="/topics">Topics</a>
-            <a href="/users">Users</a>
-        </nav>
-    </header>
-    <main>
+    <header class="site-header">
+    <a href="/" class="home-button">Home</a>
+      <a href="/topics" class="topics-button">Topics</a>
+
+</header>
+    <main class="container">
         {% block content %}{% endblock %}
     </main>
 </body>

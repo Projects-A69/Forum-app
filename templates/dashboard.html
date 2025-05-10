@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2 class="dashboard-title">Welcome to Your Dashboard!</h2>
+
+    <div class="token-container">
+        <h3 class="token-heading">Your Access Token</h3>
+        <div class="token-display small-box">
+            <code>{{ token }}</code>
+        </div>
+        <button class="copy-token large-button" onclick="copyToClipboard('{{ token }}')">Copy Token</button>
+        <p class="token-note">Please store this token securely. It will be required for API access.</p>
+    </div>
+
+    <section class="dashboard-actions">
+        <a href="/topics" class="button action-button">View Topics</a>
+        <a href="/categories" class="button action-button">Browse Categories</a>
+        <a href="/logout" class="button action-button logout-button">Logout</a>
+    </section>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.copy-token');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy Token', 2000);
+    });
+}
+</script>
+{% endblock %}

@@ -59,3 +59,26 @@ def make_user_admin(requesting_user: User, target_user_id: int) -> bool | None:
 
     update_query("UPDATE users SET is_admin = 1 WHERE id = ?", (target_user_id,))
     return True
+
+
+
+def find_by_email(email: str) -> User | None:
+    data = read_query(
+        '''SELECT id, username, telephone_number, email, is_admin, password, date_registration 
+           FROM users WHERE email = ?''',
+        (email,))
+    if not data:
+        return None
+
+    return User.from_query_result(*data[0])
+
+
+def find_by_telephone(telephone_number: str) -> User | None:
+    data = read_query(
+        '''SELECT id, username, telephone_number, email, is_admin, password, date_registration 
+           FROM users WHERE telephone_number = ?''',
+        (telephone_number,))
+    if not data:
+        return None
+
+    return User.from_query_result(*data[0])
