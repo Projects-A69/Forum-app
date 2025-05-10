@@ -109,9 +109,3 @@ def lock_category(category_id: int, token: str):
 
     return get_by_id(category_id)
 
-
-def get_topics_by_category_id(category_id: int) -> list[Topic]:
-    data = read_query(
-        '''SELECT id, title, content, author_id, date_created 
-           FROM topics WHERE category_id = ?''', (category_id,))
-    return [Topic.from_query_result(*row) for row in data]
