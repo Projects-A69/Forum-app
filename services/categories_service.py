@@ -70,7 +70,7 @@ def view_categories():
     return [Category.from_query_result(*row) for row in data]
 
 
-def lock_category(category_id: int, token: str) -> bool:
+def lock_category(category_id: int, token: str):
     user = get_user_or_raise_401(token)
 
     if not user.is_admin:
@@ -81,15 +81,11 @@ def lock_category(category_id: int, token: str) -> bool:
 
     category = get_by_id(category_id)
     if category is None:
-        return False
+        return None
 
-    if category.is_locked:
-        return True
-    
-    updated_rows = update_query('''UPDATE categories SET is_locked = 1 WHERE id = ?''',(category_id,))
+    if not category.is_locked:
+        updated_rows = update_query('''UPDATE categories SET is_locked = 1 WHERE id = ?''', (category_id,))
+        if updated_rows == 0:
+            raise ValueError("Failed to lock the category due to a database error.")
 
-    if updated_rows > 0:
-        return True
-    else:
-        raise ValueError("Failed to lock the category due to a database error.")
-
+    return get_by_id(category_id)
