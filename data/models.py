@@ -49,11 +49,11 @@ class Category(BaseModel):
     name: str
     info: str
     is_private: bool = False
-    date_created: datetime = None
+    date_created: date = None
     is_locked: bool = False
 
     @classmethod
-    def from_query_result(cls, id, name ,info, is_private, date_created, is_locked=0):
+    def from_query_result(cls, id, name ,info, is_private=0, date_created=None, is_locked=0):
         return cls(
             id=id,
             name=name,
@@ -116,7 +116,7 @@ class Topic(BaseModel):
 class CategoryCreate(BaseModel):
     name: str
     info:str
-    date_created: datetime = None
+    date_created: date = None
     is_private: int = 0
     is_locked: int = 0
 
