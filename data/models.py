@@ -66,8 +66,8 @@ class Category(BaseModel):
 class Reply(BaseModel):
     id:int
     text: str
-    date_create: datetime = None
-    date_update: datetime = None
+    date_create: date = None
+    date_update: date = None
     user_id: int
     topic_id: int
 
@@ -76,8 +76,8 @@ class Reply(BaseModel):
         return cls(
             id=id,
             text=text,
-            date_create=date_create,
-            date_update=date_update,
+            date_create=date_create or date.today(),
+            date_update=date_update or date.today(),
             user_id=user_id,
             topic_id=topic_id
         )
@@ -129,8 +129,8 @@ class TopicCreate(BaseModel):
 class Reply(BaseModel):
     id:int
     text: str
-    date_create: datetime = None
-    date_update: datetime = None
+    date_create: date = None
+    date_update: date = None
     user_id: int
     topic_id: int
 
@@ -139,8 +139,8 @@ class Reply(BaseModel):
         return cls(
             id=id,
             text=text,
-            date_create=date_create,
-            date_update=date_update,
+            date_create=date_create or date.today(),
+            date_update=date_update or date.today(),
             user_id=user_id,
             topic_id=topic_id)
 
@@ -194,7 +194,7 @@ class Message(BaseModel):
     id: int
     sender_id : int
     text :str
-    created_at: datetime = None
+    created_at: date = None
     receiver_id: int
 
     @classmethod
