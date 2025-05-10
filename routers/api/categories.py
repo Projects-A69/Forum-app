@@ -1,6 +1,6 @@
-from fastapi import APIRouter,HTTPException, Header
+from fastapi import APIRouter,HTTPException, Header, Query
 from data.models import CategoryCreate
-from services.categories_service import get_all, get_by_id, create_category, lock_category
+from services.categories_service import get_all, get_by_id, create_category, lock_category, view_categories
 from common.auth import get_user_or_raise_401
 
 
@@ -42,3 +42,13 @@ def lock_category_router(id: int, x_token: str = Header()):
         raise HTTPException(status_code=404, detail="Category not found")
 
     return updated_category
+
+@categories_router.get('/')
+def view_categories(
+    search: str = Query(None, description="Search in category name or info"),
+    sort: str = Query("desc", regex="^(asc|desc)$", description="Sort by date_created"),
+    offset: int = Query(0, ge=0),
+    limit: int = Query(10, gt=0)
+    ):
+
+    return view_categories(search=search, sort=sort, offset=offset, limit=limit)

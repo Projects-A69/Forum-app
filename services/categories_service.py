@@ -1,7 +1,8 @@
 from data.database import read_query, insert_query, update_query
 from data.models import Category, CategoryCreate
-from services.users_service import is_authenticated, from_token
 from common.auth import get_user_or_raise_401
+from data.models import Topic
+
 
 def get_all(search: str = None):
     if search is None:
@@ -14,15 +15,20 @@ def get_all(search: str = None):
 
 
 def get_by_id(id: int):
-    data = read_query(
-        '''SELECT id,name,info,is_private,date_created,is_locked FROM categories 
-            WHERE id = ?''', (id,))
+    category_data = read_query('''SELECT id, name, info, is_private, date_created, is_locked FROM categories WHERE id = ?''', (id,))
     
-    # if data[0].is_private:
-    #     if user_id and not has_access(user_id, id, 0): 
-    #         return None
+    if not category_data:
+        return None
 
-    return next((Category.from_query_result(*row) for row in data), None)
+    category = Category.from_query_result(*category_data[0])
+
+    topic_query = '''SELECT id, title, content, author_id, date_created FROM topics WHERE category_id = ?'''
+    params = [id]
+
+    topic_data = read_query(topic_query, tuple(params))
+    category.topics = [Topic.from_query_result(*row) for row in topic_data]
+
+    return category
 
 
 def create_category(category: CategoryCreate, token: str):
@@ -65,8 +71,21 @@ def view_category(id: int, search: str = None, sort_by: str = "date_created", or
     return [Category.from_query_result(*row) for row in data]
 
 
-def view_categories():
-    data = read_query('''SELECT id, name, info, is_private, date_created, is_locked FROM categories''')
+def view_categories(search: str = None, sort: str = "desc", offset: int = 0, limit: int = 10):
+    query = '''SELECT id, name, info, is_private, date_created, is_locked FROM categories WHERE 1 = 1'''
+    params = []
+
+    if search:
+        query += ' AND (name LIKE ? OR info LIKE ?)'
+        search_param = f'%{search}%'
+        params.extend([search_param, search_param])
+
+    query += f' ORDER BY date_created {sort.upper()}'
+
+    query += ' LIMIT ? OFFSET ?'
+    params.extend([limit, offset])
+
+    data = read_query(query, tuple(params))
     return [Category.from_query_result(*row) for row in data]
 
 
@@ -89,3 +108,10 @@ def lock_category(category_id: int, token: str):
             raise ValueError("Failed to lock the category due to a database error.")
 
     return get_by_id(category_id)
+
+
+def get_topics_by_category_id(category_id: int) -> list[Topic]:
+    data = read_query(
+        '''SELECT id, title, content, author_id, date_created 
+           FROM topics WHERE category_id = ?''', (category_id,))
+    return [Topic.from_query_result(*row) for row in data]
