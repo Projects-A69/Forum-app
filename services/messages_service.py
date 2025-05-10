@@ -2,7 +2,7 @@ from data.database import read_query, insert_query
 from data.models import Message, User
 
 
-def create_message(sender_id, receiver_id, text):
+def create_messages(sender_id, receiver_id, text):
     new_message = insert_query('INSERT INTO messages (sender_id, receiver_id, text) VALUES (?, ?, ?)', (sender_id, receiver_id, text))
     return {
         "id": new_message,
@@ -12,7 +12,7 @@ def create_message(sender_id, receiver_id, text):
     }
 
 
-def view_conversation(sender_id, receiver_id):
+def view_get_conversation(sender_id, receiver_id):
     view_con = read_query('SELECT * FROM messages WHERE sender_id = ? AND receiver_id = ? OR receiver_id = ? AND sender_id = ? ORDER BY created_at ASC', (sender_id, receiver_id, receiver_id, sender_id))
     return [{
         "receiver_id": t[0],
