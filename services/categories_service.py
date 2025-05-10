@@ -22,7 +22,7 @@ def get_by_id(id: int):
 
     category = Category.from_query_result(*category_data[0])
 
-    topic_query = '''SELECT id, title, content, author_id, date_created FROM topics WHERE category_id = ?'''
+    topic_query = '''SELECT id, title, text, author_id, date_created FROM topics WHERE category_id = ?'''
     params = [id]
 
     topic_data = read_query(topic_query, tuple(params))
