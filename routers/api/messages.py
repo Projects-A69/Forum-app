@@ -1,5 +1,5 @@
 from common.auth import get_user_or_raise_401
-from data.models import Message, MessageCreate
+from data.models import Message, MessageCreate, User
 from services.messages_service import create_messages, view_get_conversation, view_conversations
 from fastapi import APIRouter, HTTPException, Header
 
@@ -11,8 +11,14 @@ def create_message(message: MessageCreate, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
     if message.sender_id != user.id:
         raise HTTPException(status_code= 401, detail='Sender ID not found')
-    if message.receiver_id:
-        return f"{message.text} was sent to user: {message.receiver_id}"
+    create_messages(message.sender_id, message.receiver_id, message.text)
+
+    return {
+        "status": "Message sent successfully",
+        "message": message.text,
+        "to_user_id": message.receiver_id,
+        "from_username": user.username
+    }
 
 @messages_router.get('/users/{user_id}')
 def view_conversation(sender_id: int, receiver_id: int, x_token: str = Header()):
