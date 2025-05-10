@@ -15,6 +15,7 @@ def create_reply(reply: ReplyCreate, x_token: str = Header()):
         raise HTTPException(status_code=404, detail='Topic not found')
     if lock_topic(reply.topic_id):
         raise HTTPException(status_code=409, detail='Topic is already locked')
+    # write access check
 
     return create_replies(reply.text, reply.user_id, reply.topic_id)
 
