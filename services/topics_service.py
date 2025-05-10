@@ -55,32 +55,28 @@ def get_by_id(id: int):
 
     
 def create_topic(topic: TopicCreate, user_id: int):
-    category = read_query('''SELECT is_private FROM categories WHERE id = ?''', (topic.category_id,))
+    category = read_query('''SELECT is_private, is_locked FROM categories WHERE id = ?''', 
+                          (topic.category_id,))
+    
     if not category:
         return "category_not_found"
-    
-    if category[0][0]:
-        if not has_access(user_id, topic.category_id, 1):
-            return "no_write_access"
-        
-    category_data = read_query('''SELECT is_locked FROM categories WHERE id = ?''',
-        (topic.category_id,))
 
-    if not category_data:
-        return "category_not_found"
+    is_private, is_locked = category[0]
 
-    is_locked = category_data[0][0]
     if is_locked:
         return "category_locked"
 
-    new_id = insert_query('''INSERT INTO topics (title,text, user_id, category_id) VALUES (?, ?, ?, ?)''',
-        (topic.title,topic.text, user_id, topic.category_id))
+    if is_private and not has_access(user_id, topic.category_id, required_level=1):
+        return "no_write_access"
 
-    data = read_query('''SELECT id, title,text, user_id, category_id, best_reply_id 
-           FROM topics WHERE id = ?''',(new_id,))
+    new_id = insert_query('''INSERT INTO topics (title, text, user_id, category_id) 
+                             VALUES (?, ?, ?, ?)''',
+                          (topic.title, topic.text, user_id, topic.category_id))
+
+    data = read_query('''SELECT id, title, text, user_id, category_id, best_reply_id 
+                         FROM topics WHERE id = ?''', (new_id,))
 
     return next((Topic.from_query_result(*row) for row in data), None)
-
 
 def lock_topic(topic_id: int) -> bool:
     topic = get_by_id(topic_id)

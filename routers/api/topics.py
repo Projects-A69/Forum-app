@@ -24,16 +24,19 @@ def get_topic_by_id(id: int):
     
     
 @topics_router.post('/')
-def create_topic_router(topic: TopicCreate,x_token: str = Header()):
+def create_topic_router(topic: TopicCreate, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
-    result = create_topic(topic,user.id)
+    result = create_topic(topic, user.id)
+
     if result == "category_not_found":
         raise HTTPException(status_code=404, detail="Category not found")
-
     if result == "category_locked":
         raise HTTPException(status_code=403, detail="This category is locked and cannot accept new topics")
+    if result == "no_write_access":
+        raise HTTPException(status_code=403, detail="You don't have write access to this category")
 
     return result
+
 
     
 @topics_router.put('/{id}/lock')
