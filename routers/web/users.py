@@ -44,13 +44,16 @@ def web_register(
             password=data.password
         )
         users_service.register_user(user)
+        token = users_service.create_token(user)
+
+        response = RedirectResponse(url="/users/dashboard", status_code=302)
+        response.set_cookie(key="access_token", value=token, httponly=True, secure=True)
+        response.set_cookie(key="flash_message", value=f"User '{data.username}' registered successfully.", max_age=5)
+        return response
     except Exception as e:
         return templates.TemplateResponse("register.html", {"request": request,
             "error": f"An error occurred while registering the user: {str(e)}"})
 
-    return templates.TemplateResponse("register.html", {
-        "request": request,
-        "message": f"User '{data.username}' registered successfully."})
 @web_users_router.get("/login")
 def show_login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
@@ -64,11 +67,47 @@ def web_login(request: Request,
     user = users_service.find_by_username(data.username)
     if user and bcrypt.checkpw(data.password.encode(), user.password.encode()):
         token = users_service.create_token(user)
-        response = RedirectResponse(url=f"/users/dashboard?token={token}", status_code=302)
+        response = RedirectResponse(url=f"/users/dashboard", status_code=302)
+        response.set_cookie(key="access_token", value=token, httponly=True, secure=True)
         return response
     return templates.TemplateResponse("login.html", {"request": request,"error": "Invalid username or password."})
 
 @web_users_router.get("/dashboard")
-def show_dashboard(request: Request, token: str):
-    return templates.TemplateResponse("dashboard.html", {"request": request, "token": token})
+def show_dashboard(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url="/users/login", status_code=302)
+    
+    user = users_service.from_token(token)
+    if not user:
+        return RedirectResponse(url="/users/login", status_code=302)
+    
+    return templates.TemplateResponse("dashboard.html", {"request": request,"token": token,"current_user": user})
+    
+@web_users_router.get("/info")
+def show_user_info(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url="/users/login", status_code=302)
 
+    try:
+        user = users_service.from_token(token)
+        if not user:
+            return RedirectResponse(url="/users/login", status_code=302)
+
+        return templates.TemplateResponse("info.html", {
+            "request": request,
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "telephone_number": user.telephone_number,
+                "email": user.email,
+                "is_admin": user.is_admin,
+                "date_registration": user.date_registration
+            }
+        })
+    except Exception as e:
+        return templates.TemplateResponse("info.html", {
+            "request": request,
+            "error": f"An error occurred while fetching user info: {str(e)}"
+        })

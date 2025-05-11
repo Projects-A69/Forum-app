@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-access-container">
+    <div class="admin-header">
+        <h2 class="admin-title">Manage Access: {{ category.name }}</h2>
+        <a href="/admin" class="action-button blue">
+            <i class="fas fa-arrow-left"></i> Back to Admin Panel
+        </a>
+    </div>
+
+    <div class="access-management">
+        <div class="current-access-section">
+            <h3 class="section-title">
+                <i class="fas fa-users"></i> Current Access Permissions
+            </h3>
+            
+            {% if users_with_access %}
+            <div class="access-table-container">
+                <table class="access-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Access Level</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users_with_access %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>
+                                <span class="access-badge {{ 'read' if user.access_level == 0 else 'write' }}">
+                                    {{ "Read" if user.access_level == 0 else "Write" }}
+                                </span>
+                            </td>
+                            <td class="actions-cell">
+                                <form method="post" action="/admin/category/{{ category.id }}/revoke/{{ user.user_id }}">
+                                    <button type="submit" class="action-button danger small">
+                                        <i class="fas fa-times"></i> Revoke
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-info-circle"></i>
+                <p>No special access granted for this category</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="grant-access-section">
+            <h3 class="section-title">
+                <i class="fas fa-user-plus"></i> Grant New Access
+            </h3>
+            
+            <form method="post" action="/admin/category/{{ category.id }}/grant" class="access-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user_id">
+                            <i class="fas fa-user"></i> Select User:
+                        </label>
+                        <select id="user_id" name="user_id" required class="form-select">
+                            <option value="" disabled selected>Choose a user...</option>
+                            {% for user in all_users %}
+                            <option value="{{ user.id }}">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="access_level">
+                            <i class="fas fa-shield-alt"></i> Access Level:
+                        </label>
+                        <select id="access_level" name="access_level" required class="form-select">
+                            <option value="0">Read Only</option>
+                            <option value="1">Read/Write</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="action-button blue">
+                    <i class="fas fa-check"></i> Grant Access
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

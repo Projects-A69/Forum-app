@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-container">
+    <h2 class="admin-title">Admin Panel</h2>
+    
+    <div class="admin-actions">
+        <a href="/users/dashboard" class="action-button blue">Back to Dashboard</a>
+    </div>
+
+    <h3 class="section-title">Manage Category Access</h3>
+    
+    <div class="category-list">
+        {% for category in categories %}
+        <div class="category-card">
+            <h4>{{ category.name }}</h4>
+            <a href="/admin/category/{{ category.id }}" class="action-button blue small">
+                Manage Access
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

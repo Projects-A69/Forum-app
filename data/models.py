@@ -162,7 +162,7 @@ class Topic(BaseModel):
     replies: list[Reply] = []
 
     @classmethod
-    def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0,replies = None):
+    def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=None,replies = None):
         return cls(
             id=id,
             title=title,
@@ -171,7 +171,7 @@ class Topic(BaseModel):
             category_id=category_id,
             is_locked=is_locked if is_locked is not None else 0,
             date_create=date_create or date.today(),
-            best_reply_id=best_reply_id,
+            best_reply_id=best_reply_id if best_reply_id is not None else 0,
             replies = replies or [])
         
         

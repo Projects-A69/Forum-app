@@ -16,7 +16,11 @@
     <section class="dashboard-actions">
         <a href="/topics" class="button action-button">View Topics</a>
         <a href="/categories" class="button action-button">Browse Categories</a>
-        <a href="/logout" class="button action-button logout-button">Logout</a>
+        <a href="/users/info" class="button action-button">User Info</a>
+        {% if current_user and current_user.is_admin %}
+        <a href="/admin" class="button action-button">Admin Panel</a>
+    {% endif %}
+        <a href="/" class="button action-button">Logout</a>
     </section>
 </div>
 

@@ -36,20 +36,30 @@ def show_create_topic_page(request: Request):
 def create_topic_web(
     request: Request,
     title: str = Form(...),
-    content: str = Form(...),
+    text: str = Form(...),
     category_id: int = Form(...),
     x_token: str = Form(...)):
+    
     user = get_user_or_raise_401(x_token)
+    
+    if not user:
+        return RedirectResponse(url="/users/login", status_code=302)
+    
     topic_data = TopicCreate(
         title=title,
-        content=content,
+        text=text,
         category_id=category_id)
+    
     result = create_topic(topic_data, user.id)
     
     if result == "category_not_found":
         return RedirectResponse(url="/error?message=Category+not+found", status_code=302)
     if result == "category_locked":
         return RedirectResponse(url="/error?message=Category+is+locked", status_code=302)
+    if result == "category_private":
+        return RedirectResponse(url="/error?message=Category+is+private", status_code=302)
+    if result == "no_write_access":
+        return RedirectResponse(url="/error?message=No+write+access", status_code=302)
         
     return RedirectResponse(url=f"/topics/{result.id}", status_code=302)
 
