@@ -9,15 +9,12 @@ messages_router = APIRouter(prefix='/api/messages', tags=['Messages'])
 @messages_router.post('/')
 def create_message(message: MessageCreate, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
-    if message.sender_id != user.id:
-        raise HTTPException(status_code= 401, detail='Sender ID not found')
+    if user.id not in (message.sender_id, message.receiver_id):
+        raise HTTPException(status_code= 401, detail='User ID does not exist')
     create_messages(message.sender_id, message.receiver_id, message.text)
-
     return {
-        "status": "Message sent successfully",
         "message": message.text,
-        "to_user_id": message.receiver_id,
-        "from_username": user.username
+        "to_user_id": message.receiver_id
     }
 
 @messages_router.get('/users/{user_id}')
@@ -32,5 +29,5 @@ def view_conversation(sender_id: int, receiver_id: int, x_token: str = Header())
 def view_all_conversations(id: int, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
     if id != user.id:
-        raise HTTPException(status_code=401, detail='User not found')
+        raise HTTPException(status_code=401, detail='Your ID is invalid!')
     return view_conversations(id)
