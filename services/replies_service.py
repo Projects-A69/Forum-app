@@ -2,7 +2,7 @@ from http.client import HTTPException
 
 from services.category_access_service import has_access
 from data.database import read_query, insert_query
-from data.models import Reply, RepliesHasUsers, User, Topic, Category
+from data.models import Reply, RepliesHasUsers, User, Topic, Category, ReplyCreate
 from data.models import reply_votes
 
 
@@ -11,10 +11,6 @@ def create_replies(text, user_id, topic_id):
     category_id, is_locked = topics[0]
     if is_locked:
         return 'topic is locked'
-    categorys = read_query('SELECT is_private FROM categories WHERE id = ? ' ,(category_id,))
-    is_private = categorys[0][0]
-    if is_private and not has_access(user_id, category_id, required_level= 1):
-        return "no_write_access"
 
     new_replies = insert_query('INSERT INTO replies (text, user_id, topic_id) VALUES (?, ?, ?)', (text, user_id, topic_id))
     return {

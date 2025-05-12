@@ -1,6 +1,7 @@
 from common.auth import get_user_or_raise_401
 from fastapi import APIRouter, HTTPException, Header
 from services.replies_service import create_replies, vote_replies
+from services.category_access_service import has_access
 from services.topics_service import lock_topic, get_by_id
 from data.models import Reply, ReplyCreate, RepliesHasUsers
 
@@ -15,11 +16,12 @@ def create_reply(reply: ReplyCreate, x_token: str = Header()):
     topic = get_by_id(reply.topic_id)
     if topic is None:
         raise HTTPException(status_code=404, detail='Topic not found')
+    category_id = topic.category_id
+    if not has_access(user.id, category_id, required_level = 1):
+        raise HTTPException(status_code=403, detail="No write access")
     result = create_replies(reply.text, user.id, reply.topic_id)
     if result == 'topic is locked':
         raise HTTPException(status_code=404, detail='Topic is locked')
-    if result == "no_write_access":
-        raise HTTPException(status_code=404, detail='No write access')
 
     return result
 
