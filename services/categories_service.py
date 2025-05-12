@@ -26,7 +26,7 @@ def get_by_id(id: int, user_id: int):
         return "no_write_access"
 
     topic_data = read_query(
-        '''SELECT id, title, text, user_id, date_created FROM topics WHERE category_id = ?''',
+        '''SELECT id, title, text, user_id, category_id, is_locked, date_created, best_reply_id FROM topics WHERE category_id = ?''',
         (id,)
     )
     category.topics = [Topic.from_query_result(*row) for row in topic_data]
