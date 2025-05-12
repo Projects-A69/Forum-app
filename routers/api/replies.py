@@ -18,7 +18,7 @@ def create_reply(reply: ReplyCreate, x_token: str = Header()):
         raise HTTPException(status_code=404, detail='Topic not found')
     category_id = topic.category_id
     if not has_access(user.id, category_id, required_level = 1):
-        raise HTTPException(status_code=403, detail="No write access")
+        raise HTTPException(status_code=403, detail=f"User {user.id} does not have acces to write")
     result = create_replies(reply.text, user.id, reply.topic_id)
     if result == 'topic is locked':
         raise HTTPException(status_code=404, detail='Topic is locked')

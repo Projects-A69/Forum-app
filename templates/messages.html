@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>All Conversations</h1>
+
+<form action="/messages/go" method="post" style="margin-bottom: 20px;">
+    <input name="receiver_id" type="number" placeholder="Enter User Id" required>
+    <button type="submit">Open Chat</button>
+</form>
+
+{% if conversations %}
+    <ul>
+        {% for convo in conversations %}
+            <li>
+                <a href="/messages/{{ convo.id }}">
+                    {{ convo.username }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No conversations found.</p>
+{% endif %}
+
+{% if messages %}
+    <hr>
+    <h2>Chat with {{ receiver_id }}</h2>
+
+    <div class="chat-messages" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;">
+        {% for msg in messages %}
+            <div style="text-align: {{ 'right' if msg.sender_id == user_id else 'left' }};">
+                <div>{{ msg.text }}</div>
+                <small>{{ msg.created_at }}</small>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+
+    <form action="/messages/create" method="post">
+        <input type="text" name="text" placeholder="Type your message..." required>
+        <input type="hidden" name="sender_id" value="{{ user_id }}">
+        <input type="hidden" name="receiver_id" value="{{ receiver_id }}">
+        <input type="hidden" name="created_at" value="2025-05-11">
+        <button type="submit">Send</button>
+    </form>
+{% endif %}
+{% endblock %}
+
+
+
+
