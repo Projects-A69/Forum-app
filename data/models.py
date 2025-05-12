@@ -43,26 +43,6 @@ class UserInfoResponse(BaseModel):
     is_admin: bool
     date_registration: date
 
-
-class Category(BaseModel):
-    id: int
-    name: str
-    info: str
-    is_private: bool = False
-    date_created: date = None
-    is_locked: bool = False
-
-    @classmethod
-    def from_query_result(cls, id, name ,info, is_private=0, date_created=None, is_locked=0):
-        return cls(
-            id=id,
-            name=name,
-            info=info,
-            is_private=is_private if is_private is not None else False,
-            date_created=date_created or date.today(),
-            is_locked=is_locked if is_locked is not None else False)
-
-    
 class Reply(BaseModel):
     id:int
     text: str
@@ -112,6 +92,26 @@ class Topic(BaseModel):
             best_reply_id=best_reply_id,
             replies = replies or [])
 
+
+class Category(BaseModel):
+    id: int
+    name: str
+    info: str
+    is_private: bool = False
+    date_created: date = None
+    is_locked: bool = False
+    topics: list[Topic] = []
+
+    @classmethod
+    def from_query_result(cls, id, name ,info, is_private=0, date_created=None, is_locked=0, topics=None):
+        return cls(
+            id=id,
+            name=name,
+            info=info,
+            is_private=is_private if is_private is not None else False,
+            date_created=date_created or date.today(),
+            is_locked=is_locked if is_locked is not None else False,
+            topics=topics or [])
 
 class CategoryCreate(BaseModel):
     name: str
