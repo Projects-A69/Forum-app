@@ -43,25 +43,6 @@ class UserInfoResponse(BaseModel):
     is_admin: bool
     date_registration: date
 
-
-class Category(BaseModel):
-    id: int
-    name: str
-    info: str
-    is_private: bool = False
-    date_created: date = None
-    is_locked: bool = False
-
-    @classmethod
-    def from_query_result(cls, id, name ,info, is_private=0, date_created=None, is_locked=0):
-        return cls(
-            id=id,
-            name=name,
-            info=info,
-            is_private=is_private if is_private is not None else False,
-            date_created=date_created or date.today(),
-            is_locked=is_locked if is_locked is not None else False)
-
     
 class Reply(BaseModel):
     id:int
@@ -87,6 +68,7 @@ class ReplyCreate(BaseModel):
     text: str
     user_id: int
     topic_id: int
+
     
 class Topic(BaseModel):
     id: int
@@ -181,7 +163,6 @@ class TopicCreate(BaseModel):
     category_id: int
 
 
-
 class RepliesHasUsers(BaseModel):
     replies_id: int
     users_id: int
@@ -219,3 +200,23 @@ class CategoryAccess(BaseModel):
 
 class CategoryAccessUpdate(BaseModel):
     access_level: int
+
+class Category(BaseModel):
+    id: int
+    name: str
+    info: str
+    is_private: bool = False
+    date_created: date = None
+    is_locked: bool = False
+    topics: list[Topic] = []
+
+    @classmethod
+    def from_query_result(cls, id, name ,info, is_private=0, date_created=None, is_locked=0, topics= None):
+        return cls(
+            id=id,
+            name=name,
+            info=info,
+            is_private=is_private if is_private is not None else False,
+            date_created=date_created or date.today(),
+            is_locked=is_locked if is_locked is not None else False,
+            topics = topics or [])
