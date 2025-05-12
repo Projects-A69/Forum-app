@@ -40,7 +40,7 @@ def register(data: RegisterData):
     if users_service.find_by_email(data.email):
         return BadRequest(f"Email '{data.email}' is already registered. Please use another email or login.")
     
-    if users_service.find_by_telephone_number(data.telephone_number):
+    if users_service.find_by_telephone(data.telephone_number):
         return BadRequest(f"Telephone number '{data.telephone_number}' is already registered. Please use another number or login.")
 
     user_data = User(
