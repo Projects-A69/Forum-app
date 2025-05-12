@@ -100,7 +100,7 @@ def lock_category(category_id: int, token: str):
     if category_id is None:
         raise ValueError("Category ID is required.")
 
-    category = get_by_id(category_id)
+    category = get_by_id(category_id, user.id)
     if category is None:
         return None
 
@@ -109,5 +109,5 @@ def lock_category(category_id: int, token: str):
         if updated_rows == 0:
             raise ValueError("Failed to lock the category due to a database error.")
 
-    return get_by_id(category_id)
+    return get_by_id(category_id, user.id)
 
