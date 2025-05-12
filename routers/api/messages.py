@@ -26,8 +26,6 @@ def view_conversation(sender_id: int, receiver_id: int, x_token: str = Header())
 
 
 @messages_router.get('/conversations/users')
-def view_all_conversations(id: int, x_token: str = Header()):
+def view_all_conversations(x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
-    if id != user.id:
-        raise HTTPException(status_code=401, detail='Your ID is invalid!')
-    return view_conversations(id)
+    return view_conversations(user.id)
