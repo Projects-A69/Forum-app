@@ -39,7 +39,7 @@ def manage_category_access(request: Request, category_id: int):
         return RedirectResponse(url="/admin", status_code=302)
     
     users_with_access = category_access_service.get_category_access(category_id)
-    all_users = users_service.get_all_users()  # You'll need to implement this
+    all_users = users_service.get_all_users()
     
     return templates.TemplateResponse("manage_access.html", {
         "request": request,
