@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="info-container">
+    <h2>User Information</h2>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% else %}
+        <ul>
+            <li><strong>ID:</strong> {{ user.id }}</li>
+            <li><strong>Username:</strong> {{ user.username }}</li>
+            <li><strong>Email:</strong> {{ user.email }}</li>
+            <li><strong>Phone:</strong> {{ user.telephone_number }}</li>
+            <li><strong>Admin:</strong> {{ user.is_admin }}</li>
+            <li><strong>Registered:</strong> {{ user.date_registration }}</li>
+        </ul>
+    {% endif %}
+
+    <a href="/users/dashboard" class="button">Back to Dashboard</a>
+</div>
+{% endblock %}

@@ -66,7 +66,10 @@ def create_topic(topic: TopicCreate, user_id: int):
     if is_locked:
         return "category_locked"
 
-    if is_private and not has_access(user_id, topic.category_id, required_level=1):
+    if is_private:
+        return "category_private"
+    
+    if not has_access(user_id, topic.category_id, required_level=1):
         return "no_write_access"
 
     new_id = insert_query('''INSERT INTO topics (title, text, user_id, category_id) 
@@ -85,11 +88,7 @@ def lock_topic(topic_id: int) -> bool:
 
     insert_query('''UPDATE topics SET is_locked = 1 WHERE id = ?''', (topic_id,))
 
-    updated = read_query('''SELECT id, title, description, user_id, is_locked, best_reply_id 
-           FROM topics 
-           WHERE id = ?''', (topic_id,))
-
-    return Topic.from_query_result(*updated[0]) if updated else None
+    return get_topic_with_replies(topic_id)
 
 
 def choose_best_reply(topic_id: int, reply_id: int, user_id: int) -> str | None:

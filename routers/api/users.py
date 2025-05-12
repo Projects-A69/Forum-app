@@ -1,3 +1,4 @@
+import re
 from fastapi import APIRouter, Header,Response
 from common.auth import get_user_or_raise_401
 from common.responses import BadRequest,Unauthorized,NotFound
@@ -35,6 +36,12 @@ def user_info(x_token: str = Header()):
 def register(data: RegisterData):
     if users_service.find_by_username(data.username):
         return BadRequest(f"Username '{data.username}' is already taken. Please choose another one or login.")
+    
+    if users_service.find_by_email(data.email):
+        return BadRequest(f"Email '{data.email}' is already registered. Please use another email or login.")
+    
+    if users_service.find_by_telephone(data.telephone_number):
+        return BadRequest(f"Telephone number '{data.telephone_number}' is already registered. Please use another number or login.")
 
     user_data = User(
         username=data.username,

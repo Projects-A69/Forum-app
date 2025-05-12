@@ -10,6 +10,8 @@ from routers.api.category_access import access_router
 from routers.web.home import home_router
 from routers.web.topics import web_topics_router
 from routers.web.users import web_users_router
+from routers.web.category_access import admin_router
+
 
 app = FastAPI()
 
@@ -25,6 +27,8 @@ app.include_router(access_router)
 app.include_router(home_router)
 app.include_router(web_topics_router)
 app.include_router(web_users_router)
+app.include_router(admin_router)
+
 
 
 

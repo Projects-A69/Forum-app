@@ -34,6 +34,8 @@ def create_topic_router(topic: TopicCreate, x_token: str = Header()):
         raise HTTPException(status_code=403, detail="This category is locked and cannot accept new topics")
     if result == "no_write_access":
         raise HTTPException(status_code=403, detail="You don't have write access to this category")
+    if result == "category_private":
+        raise HTTPException(status_code=403, detail="This category is private and you don't have access")
 
     return result
 

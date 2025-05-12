@@ -1,9 +1,17 @@
+from http.client import HTTPException
+
+from services.category_access_service import has_access
 from data.database import read_query, insert_query
-from data.models import Reply, RepliesHasUsers, User
+from data.models import Reply, RepliesHasUsers, User, Topic, Category, ReplyCreate
 from data.models import reply_votes
 
 
 def create_replies(text, user_id, topic_id):
+    topics = read_query('SELECT category_id, is_locked FROM topics WHERE id = ? ' ,(topic_id,))
+    category_id, is_locked = topics[0]
+    if is_locked:
+        return 'topic is locked'
+
     new_replies = insert_query('INSERT INTO replies (text, user_id, topic_id) VALUES (?, ?, ?)', (text, user_id, topic_id))
     return {
         "id": new_replies,
@@ -14,6 +22,9 @@ def create_replies(text, user_id, topic_id):
 
 
 def vote_replies(users_id, replies_id, vote_type):
+    reply_existed = read_query('SELECT 1 FROM replies WHERE id = ? ' ,(replies_id,))
+    if not reply_existed:
+       return "Reply not found"
     is_exist_vote = read_query('SELECT vote_type FROM replies_has_votes WHERE users_id = ? AND replies_id = ?', (users_id, replies_id))
     if is_exist_vote:
         insert_query('UPDATE replies_has_votes SET vote_type = ? WHERE users_id = ? AND replies_id = ?',(vote_type, users_id, replies_id))

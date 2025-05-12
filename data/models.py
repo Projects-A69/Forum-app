@@ -47,8 +47,8 @@ class UserInfoResponse(BaseModel):
 class Reply(BaseModel):
     id:int
     text: str
-    date_create: datetime = None
-    date_update: datetime = None
+    date_create: date = None
+    date_update: date = None
     user_id: int
     topic_id: int
 
@@ -57,8 +57,8 @@ class Reply(BaseModel):
         return cls(
             id=id,
             text=text,
-            date_create=date_create,
-            date_update=date_update,
+            date_create=date_create or date.today(),
+            date_update=date_update or date.today(),
             user_id=user_id,
             topic_id=topic_id
         )
@@ -95,6 +95,26 @@ class Topic(BaseModel):
             replies = replies or [])
 
 
+class Category(BaseModel):
+    id: int
+    name: str
+    info: str
+    is_private: bool = False
+    date_created: date = None
+    is_locked: bool = False
+    topics: list[Topic] = []
+
+    @classmethod
+    def from_query_result(cls, id, name ,info, is_private=0, date_created=None, is_locked=0, topics=None):
+        return cls(
+            id=id,
+            name=name,
+            info=info,
+            is_private=is_private if is_private is not None else False,
+            date_created=date_created or date.today(),
+            is_locked=is_locked if is_locked is not None else False,
+            topics=topics or [])
+
 class CategoryCreate(BaseModel):
     name: str
     info:str
@@ -111,8 +131,8 @@ class TopicCreate(BaseModel):
 class Reply(BaseModel):
     id:int
     text: str
-    date_create: datetime = None
-    date_update: datetime = None
+    date_create: date = None
+    date_update: date = None
     user_id: int
     topic_id: int
 
@@ -121,8 +141,8 @@ class Reply(BaseModel):
         return cls(
             id=id,
             text=text,
-            date_create=date_create,
-            date_update=date_update,
+            date_create=date_create or date.today(),
+            date_update=date_update or date.today(),
             user_id=user_id,
             topic_id=topic_id)
 
@@ -144,7 +164,7 @@ class Topic(BaseModel):
     replies: list[Reply] = []
 
     @classmethod
-    def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=0,replies = None):
+    def from_query_result(cls, id, title,text, user_id, category_id, is_locked=0, date_create=None, best_reply_id=None,replies = None):
         return cls(
             id=id,
             title=title,
@@ -153,7 +173,7 @@ class Topic(BaseModel):
             category_id=category_id,
             is_locked=is_locked if is_locked is not None else 0,
             date_create=date_create or date.today(),
-            best_reply_id=best_reply_id,
+            best_reply_id=best_reply_id if best_reply_id is not None else 0,
             replies = replies or [])
         
         
@@ -175,7 +195,7 @@ class Message(BaseModel):
     id: int
     sender_id : int
     text :str
-    created_at: datetime = None
+    created_at: date = None
     receiver_id: int
 
     @classmethod

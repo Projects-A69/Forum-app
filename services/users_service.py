@@ -82,3 +82,9 @@ def find_by_telephone(telephone_number: str) -> User | None:
         return None
 
     return User.from_query_result(*data[0])
+
+def get_all_users() -> list[User]:
+    data = read_query(
+        '''SELECT id, username, telephone_number, email, is_admin, password, date_registration FROM users'''
+    )
+    return [User.from_query_result(*row) for row in data]
