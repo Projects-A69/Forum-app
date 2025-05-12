@@ -13,18 +13,19 @@ def get_categories(search: str | None = None):
 
 
 @categories_router.get('/{id}')
-def get_category_by_id(id: int):
-    category = get_by_id(id)
+def get_category_by_id(id: int, user_id: int):
+    category = get_by_id(id, user_id)
 
     if category is None:
         raise HTTPException(status_code=404, detail="Category not found")
-    else:
-        return category
+    if category == "no_write_access":
+        raise HTTPException(status_code=403, detail="Access denied")
 
+    return category
 
 @categories_router.post('/')
 def create_categories_router(category: CategoryCreate,x_token: str = Header()):
-    user = get_user_or_raise_401(x_token)
+    get_user_or_raise_401(x_token)
 
     return create_category(category,x_token)
 
