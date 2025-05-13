@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from data.database import read_query, insert_query, update_query
 from data.models import Category, CategoryCreate
 from common.auth import get_user_or_raise_401
@@ -14,20 +15,20 @@ def get_all(search: str = None):
     return (Category.from_query_result(*row) for row in data)
 
 
-def get_by_id(id: int, user_id:int):
-    category_data = read_query('''SELECT id, name, info, is_private, date_created, is_locked FROM categories WHERE id = ?''', (id,))    
+def get_by_id(id: int, user_id: int):
+    category_data = read_query('''SELECT id, name, info, is_private, date_created, is_locked FROM categories WHERE id = ?''', (id,))
     if not category_data:
         return None
-    
+
     category = Category.from_query_result(*category_data[0])
 
     if category.is_private and (user_id is None or not has_access(user_id, category.id, required_level=1)):
         return "no_write_access"
 
-    topic_query = '''SELECT id, title, text, user_id, date_created FROM topics WHERE category_id = ?'''
-    params = [id]
-
-    topic_data = read_query(topic_query, tuple(params))
+    topic_data = read_query(
+        '''SELECT id, title, text, user_id, category_id, is_locked, date_created, best_reply_id FROM topics WHERE category_id = ?''',
+        (id,)
+    )
     category.topics = [Topic.from_query_result(*row) for row in topic_data]
 
     return category
@@ -95,19 +96,23 @@ def lock_category(category_id: int, token: str):
     user = get_user_or_raise_401(token)
 
     if not user.is_admin:
-        raise ValueError("Admin access required to lock a category.")
+        raise HTTPException(status_code=403, detail="Admin access required to lock a category.")
 
     if category_id is None:
-        raise ValueError("Category ID is required.")
+        raise HTTPException(status_code=400, detail="Category ID is required.")
 
-    category = get_by_id(category_id)
+    category = get_by_id(category_id, user.id)
     if category is None:
-        return None
+        raise HTTPException(status_code=404, detail="Category not found.")
+    if category == "no_write_access":
+        raise HTTPException(status_code=403, detail="You do not have access to this category.")
 
     if not category.is_locked:
-        updated_rows = update_query('''UPDATE categories SET is_locked = 1 WHERE id = ?''', (category_id,))
+        updated_rows = update_query(
+            '''UPDATE categories SET is_locked = 1 WHERE id = ?''',
+            (category_id,)
+        )
         if updated_rows == 0:
-            raise ValueError("Failed to lock the category due to a database error.")
+            raise HTTPException(status_code=500, detail="Failed to lock the category due to a database error.")
 
-    return get_by_id(category_id)
-
+    return get_by_id(category_id, user.id)
