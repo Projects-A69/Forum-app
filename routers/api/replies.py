@@ -26,7 +26,7 @@ def create_reply(reply: ReplyCreate, x_token: str = Header()):
     return result
 
 
-@replies_router.post('/replies/{reply_id}/votes')
+@replies_router.put('/replies/{reply_id}/votes')
 def vote_reply(vote_reply: RepliesHasUsers, x_token: str = Header()):
     user = get_user_or_raise_401(x_token)
     if vote_reply.users_id != user.id:
