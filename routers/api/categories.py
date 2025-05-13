@@ -1,6 +1,6 @@
 from fastapi import APIRouter,HTTPException, Header, Query
-from data.models import CategoryCreate
-from services.categories_service import get_all, get_by_id, create_category, lock_category, view_categories
+from data.models import CategoryCreate, Category
+from services.categories_service import get_by_id, create_category, lock_category, get_all_categories
 from common.auth import get_user_or_raise_401
 
 
@@ -8,19 +8,36 @@ from common.auth import get_user_or_raise_401
 categories_router = APIRouter(prefix='/api/categories',tags=['Categories'])
 
 @categories_router.get('/')
-def get_categories(search: str | None = None):
-    return get_all(search)
+def view_categories_router(
+    search: str | None = None,
+    sort: str = Query("desc", regex="^(asc|desc)$", description="Sort by date_created"),
+    offset: int = Query(0, ge=0),
+    limit: int = Query(10, gt=0)
+):
+    return get_all_categories(search=search, sort=sort, offset=offset, limit=limit)
 
 
-@categories_router.get('/{id}')
-def get_category_by_id(id: int, user_id: int):
-    category = get_by_id(id, user_id)
+@categories_router.get("/categories/{id}", response_model=Category)
+def view_category_router(
+    id: int,
+    search: str = Query(None),
+    sort_by: str = Query("date_created"),
+    order: str = Query("ASC"),
+    page: int = Query(0),
+    page_size: int = Query(10),
+    user_id: int = Query(None)
+):
+    category = get_by_id(id, search, sort_by, order, page_size, page, user_id)
 
-    if category is None:
-        raise HTTPException(status_code=404, detail="Category not found")
     if category == "no_write_access":
-        raise HTTPException(status_code=403, detail="Access denied")
-
+        raise HTTPException(status_code=403, detail="You do not have permission to view this category")
+    
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="User ID must be provided for access control.")
+    
     return category
 
 @categories_router.post('/')
@@ -32,14 +49,3 @@ def create_categories_router(category: CategoryCreate,x_token: str = Header()):
 @categories_router.put('/{id}/lock')
 def lock_category_router(id: int, x_token: str = Header()):
     return lock_category(id, x_token)
-
-
-@categories_router.get('/')
-def view_categories(
-    search: str = Query(None, description="Search in category name or info"),
-    sort: str = Query("desc", regex="^(asc|desc)$", description="Sort by date_created"),
-    offset: int = Query(0, ge=0),
-    limit: int = Query(10, gt=0)
-    ):
-
-    return view_categories(search=search, sort=sort, offset=offset, limit=limit)
