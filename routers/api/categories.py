@@ -23,11 +23,9 @@ def view_category_router(
     search: str = Query(None),
     sort_by: str = Query("date_created"),
     order: str = Query("ASC"),
-    page: int = Query(0),
-    page_size: int = Query(10),
     user_id: int = Query(None)
 ):
-    category = get_by_id(id, search, sort_by, order, page_size, page, user_id)
+    category = get_by_id(id, search, sort_by, order, user_id)
 
     if category == "no_write_access":
         raise HTTPException(status_code=403, detail="You do not have permission to view this category")

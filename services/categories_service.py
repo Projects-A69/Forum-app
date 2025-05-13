@@ -24,8 +24,7 @@ def get_all_categories(search: str = None, sort: str = "desc", offset: int = 0, 
     return [Category.from_query_result(*row) for row in data]
 
 
-def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order: str = "ASC", page_size: int = 10, page: int = 0, user_id: int = None):
-
+def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order: str = "ASC", user_id: int = None):
 
     allowed_sort_columns = ['id', 'title', 'text', 'user_id', 'category_id', 'is_locked', 'date_created', 'best_reply_id']
 
@@ -56,7 +55,6 @@ def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order:
         params.extend([like, like])
 
     topic_query += f' ORDER BY {sort_by} {order.upper()} LIMIT ? OFFSET ?'
-    params.extend([page_size, page * page_size])
 
     topic_data = read_query(topic_query, tuple(params))
     category.topics = [Topic.from_query_result(*row) for row in topic_data]
