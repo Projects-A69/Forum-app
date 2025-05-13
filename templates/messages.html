@@ -4,23 +4,18 @@
 
     <div class="sidebar">
         <h2>Chats</h2>
-        <form action="/messages/go" method="post" style="margin-bottom: 15px;">
-            <input name="receiver_id" type="number" placeholder="Enter User ID" required style="width: 80%; padding: 6px;">
-            <button type="submit" style="margin-top: 5px; width: 100%;">Open Chat</button>
+        <form method="post" action="/messages/find" class="search-form">
+        <input class="search-input" type="text" name="username" placeholder="Enter Username to chat">
+        <button type="submit" class="search-button">Find by Username</button>
         </form>
-
             {% for convo in conversations %}
                 <a href="/messages/{{ convo.id }}" class="contact {% if convo.id == receiver_id %}active{% endif %}">
                     {{ convo.username }}
                 </a>
         {% endfor %}
-    </div>
-    <div>
-    <form method="post" action="/messages/find">
-        <input type="text" name="username" placeholder="Enter Username to chat">
-        <button type="submit">Find by Username</button>
-    </form>
+            <div>
 </div>
+    </div>
 
 
     <div class="chat-panel">

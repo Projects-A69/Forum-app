@@ -683,7 +683,7 @@ body {
 
 .chat-container {
     display: flex;
-    height: 100vh;
+    height: 90vh;
     border: 1px solid #ccc;
     border-radius: 10px;
     overflow: hidden;
@@ -691,7 +691,7 @@ body {
 }
 
 .sidebar {
-    width: 30%;
+    width: 70%;
     background-color: #ffffff;
     border-right: 1px solid #ccc;
     padding: 1rem;
@@ -749,13 +749,13 @@ body {
 .right {
     background-color: #cce5ff;
     align-self: flex-end;
-    border-bottom-right-radius: 0;
+    margin-right: 50px;
 }
 
 .left {
     background-color: #f1f0f0;
     align-self: flex-start;
-    border-bottom-left-radius: 0;
+    margin-left: 50px;
 }
 
 .time {
@@ -785,4 +785,77 @@ body {
     background-color: #2a9df4;
     color: white;
     cursor: pointer;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px;
+  gap: 15px;
+  background-color: #181717;
+  outline: 3px #181717 solid;
+  outline-offset: -3px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: 400ms;
+}
+
+.button .text {
+  color: white;
+  font-weight: 700;
+  font-size: 1em;
+  transition: 400ms;
+}
+
+.button svg path {
+  transition: 400ms;
+}
+
+.button:hover {
+  background-color: transparent;
+}
+
+.button:hover .text {
+  color: #181717;
+}
+
+.button:hover svg path {
+  fill: #181717;
+}
+
+.search-form {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.search-input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    flex: 1;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 3px #6c63ff88;
+}
+
+.search-button {
+    padding: 8px 16px;
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-button:hover {
+    background-color: #594ed2;
 }
