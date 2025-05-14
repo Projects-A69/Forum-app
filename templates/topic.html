@@ -51,12 +51,33 @@
               <span>(edited on: {{ reply.date_update }})</span>
             {% endif %}
           </div>
+  <div style="text-align: right; margin-top: 5px;">
+  <form method="post" action="/topics/{{ topic.id }}/replies/{{ reply.id }}" style="display: inline;">
+    <input type="hidden" name="vote_type" value="1">
+    <button type="submit">👍</button>
+  </form>
+  <span>
+    {{ reply.likes }} {{ "like" if reply.likes == 1 else "likes" if reply.likes in [2,3,4] else "like" }}
+  </span>
+
+  <form method="post" action="/topics/{{ topic.id }}/replies/{{ reply.id }}" style="display: inline; margin-left: 10px;">
+    <input type="hidden" name="vote_type" value="0">
+    <button type="submit">👎</button>
+  </form>
+  <span>
+    {{ reply.dislikes }} {{ "dislikes" if reply.dislikes == 1 else "dislikes" if reply.dislikes in [2,3,4] else "dislikes" }}
+  </span>
+</div>
         </div>
       {% endfor %}
     </div>
   {% else %}
     <p>No replies yet.</p>
   {% endif %}
+  <form method="post" action="/topics/{{ topic.id }}/replies" style="margin-top: 20px;">
+    <input type="text" name="text" placeholder="Input your reply">
+    <button type="submit">Enter</button>
+  </form>
 
   <a href="/topics" style="display: inline-block; margin-top: 20px;">← Back to Topics</a>
 {% endblock %}

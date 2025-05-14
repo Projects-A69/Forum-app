@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Request, Form, HTTPException
+from fastapi import APIRouter, Request, Form, HTTPException, Cookie
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from data.models import TopicCreate
+from data.models import TopicCreate, ReplyCreate
 from services.topics_service import get_all,get_by_id,create_topic,lock_topic,choose_best_reply,get_topic_with_replies
 from common.auth import get_user_or_raise_401
 from data.database import insert_query
+from services.replies_service import vote_replies, create_replies, get_vote_reply
 
 templates = Jinja2Templates(directory="templates")
 web_topics_router = APIRouter(prefix="/topics", tags=["WEB TOPICS"])
@@ -16,7 +17,7 @@ def show_topics(request: Request,id: int | None = None, search: str | None = Non
         current_user = get_user_or_raise_401(request.cookies.get("access_token"))
     except HTTPException:
         pass
-        
+
     if id is not None:
         topic = get_by_id(id)
         if topic is None:
@@ -29,9 +30,9 @@ def show_topics(request: Request,id: int | None = None, search: str | None = Non
     if sort not in (None, "asc", "desc"):
         return templates.TemplateResponse("error.html", {"request": request,
             "error": "Invalid sort value. Use 'asc' or 'desc'."}, status_code=400)
-    
+
     topics = get_all(search, sort)
-    
+
     return templates.TemplateResponse("topics.html", {"request": request,
         "topics": topics,
         "search": search,
@@ -44,7 +45,7 @@ def show_create_topic_form(request: Request):
         user = get_user_or_raise_401(request.cookies.get("access_token"))
     except HTTPException:
         return RedirectResponse("/login", status_code=302)
-    
+
     return templates.TemplateResponse("create_topic.html", {"request": request,
         "user": user})
 
@@ -55,7 +56,7 @@ def show_topic(request: Request, id: int):
         current_user = get_user_or_raise_401(request.cookies.get("access_token"))
     except HTTPException:
         pass
-    
+
     topic = get_by_id(id)
     
     if topic is None:
@@ -78,7 +79,7 @@ def handle_create_topic(
     text: str = Form(...),
     category_id: int = Form(...)):
     try:
-        user = get_user_or_raise_401(request.cookies.get("access_token"))
+        user = get_user_or_raise_401(access_token)
     except HTTPException:
         return RedirectResponse("/login", status_code=302)
 
@@ -143,14 +144,14 @@ def handle_best_reply(request: Request, topic_id: int, reply_id: int):
         user = get_user_or_raise_401(request.cookies.get("access_token"))
     except HTTPException:
         return RedirectResponse("/login", status_code=302)
-    
+
     topic = get_by_id(topic_id)
     if topic is None:
         return templates.TemplateResponse("error.html", {
             "request": request,
             "error": "Topic not found"
         }, status_code=404)
-    
+
     if user.id != topic.user_id:
         return templates.TemplateResponse("error.html", {
             "request": request,
@@ -173,6 +174,44 @@ def handle_best_reply(request: Request, topic_id: int, reply_id: int):
         return templates.TemplateResponse("error.html", {
             "request": request,
             "error": "Reply not found for this topic."
+        }, status_code=404)
+
+    return RedirectResponse(f"/topics/{topic_id}", status_code=302)
+
+@web_topics_router.post("/{topic_id}/replies")
+def handle_replies(
+    request: Request,
+    topic_id: int,
+    text: str = Form(),
+    access_token: str | None = Cookie(default=None)
+):
+    try:
+        user = get_user_or_raise_401(access_token)
+    except HTTPException:
+        return RedirectResponse("/login", status_code=302)
+
+    create_replies(text, user.id, topic_id)
+    return RedirectResponse(f"/topics/{topic_id}", status_code=302)
+
+@web_topics_router.post("/{topic_id}/replies/{reply_id}")
+def handle_votes(
+    request: Request,
+    topic_id: int,
+    reply_id: int,
+    vote_type: int = Form(...),
+    access_token: str | None = Cookie(default=None)
+):
+    try:
+        user = get_user_or_raise_401(access_token)
+    except HTTPException:
+        return RedirectResponse("/login", status_code=302)
+
+    result = vote_replies(users_id=user.id, replies_id=reply_id, vote_type=vote_type)
+
+    if result == "Reply not found":
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": "Reply not found"
         }, status_code=404)
 
     return RedirectResponse(f"/topics/{topic_id}", status_code=302)
