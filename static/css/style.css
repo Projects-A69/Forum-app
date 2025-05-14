@@ -23,50 +23,9 @@ body {
     margin: 0 auto;
 }
 
-<<<<<<< HEAD
-
-.site-header {
-    background-color: white;
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-
-.nav-button {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: var(--primary-color);
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.nav-button:hover {
-    background-color: rgba(66, 133, 244, 0.1);
-}
-
-.messages-button {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: var(--primary-color);
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-.messages-button:hover {
-    background-color: rgba(66,133,244,0.1);
-}
-
-.welcome-container {
-    text-align: center;
-    margin-top: 5rem;
-=======
 /* Base container style for reuse */
 .base-container {
     background: white;
->>>>>>> e26da63 (final touches)
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.05);
