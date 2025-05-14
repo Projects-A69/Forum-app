@@ -7,6 +7,9 @@
         <form method="post" action="/messages/find" class="search-form">
         <input class="search-input" type="text" name="username" placeholder="Enter Username to chat">
         <button type="submit" class="search-button">Find by Username</button>
+            {% if error %}
+            <p class="error-message" style = "color: red;">{{ error }}</p>
+            {% endif %}
         </form>
             {% for convo in conversations %}
                 <a href="/messages/{{ convo.id }}" class="contact {% if convo.id == receiver_id %}active{% endif %}">

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Form, Cookie
+from fastapi import APIRouter, Request, Form, Cookie, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from data.models import Message, MessageCreate, User
@@ -13,8 +13,11 @@ templates = Jinja2Templates(directory="templates")
 web_messages_router = APIRouter(prefix="/messages", tags=["Web Messages"])
 
 @web_messages_router.get("/{receiver_id}")
-def show_chat(request: Request, receiver_id: int, access_token: str = Cookie()):
-    user = get_user_or_raise_401(access_token)
+def show_chat(request: Request, receiver_id: int, access_token: str | None = Cookie(default=None)):
+    try:
+        user = get_user_or_raise_401(access_token)
+    except HTTPException:
+        return templates.TemplateResponse("messages.html", {"request": request, "error": "You must login first."})
     conversation = view_conversations(user.id)
     messages = view_get_conversation(user.id, receiver_id)
     return templates.TemplateResponse("messages.html", {"request": request,
@@ -24,8 +27,11 @@ def show_chat(request: Request, receiver_id: int, access_token: str = Cookie()):
                                                         "user_id": user.id})
 
 @web_messages_router.get("/")
-def view_conversations_home(request: Request, access_token: str = Cookie()):
-    user = get_user_or_raise_401(access_token)
+def view_conversations_home(request: Request, access_token: str | None = Cookie(default=None)):
+    try:
+        user = get_user_or_raise_401(access_token)
+    except HTTPException:
+        return templates.TemplateResponse("messages.html", {"request": request, "error": "You must login first."})
     conversation = view_conversations(user.id)
     return templates.TemplateResponse("messages.html",{
                         'request':request,
@@ -46,9 +52,11 @@ def create_message_page(
         text: str = Form(),
         receiver_id: int = Form(),
         created_at: date = Form(),
-        access_token: str = Cookie()):
-
-    user = get_user_or_raise_401(access_token)
+        access_token: str | None = Cookie(default=None)):
+    try:
+        user = get_user_or_raise_401(access_token)
+    except HTTPException:
+        return templates.TemplateResponse("messages.html", {"request": request, "error": "You must login first."})
 
     messages_data = MessageCreate(
         sender_id=sender_id,
@@ -60,10 +68,16 @@ def create_message_page(
     return RedirectResponse(url=f"/messages/{receiver_id}", status_code=302)
 
 @web_messages_router.post("/find")
-def find_by_username_web(request: Request, username: str = Form() ,access_token: str = Cookie()):
-    user = get_user_or_raise_401(access_token)
+def find_by_username_web(request: Request, username: str = Form() ,access_token: str | None = Cookie(default=None)):
+    try:
+        user = get_user_or_raise_401(access_token)
+    except HTTPException:
+        return templates.TemplateResponse("messages.html", {"request": request, "error": "You must login first."})
+
+    if username.strip() == "":
+        return templates.TemplateResponse("messages.html", {"request": request, "error": "You must enter a username!"})
     found = find_by_username(username)
-    conversation = view_get_conversation(user.id, found.id)
     if not found:
-        return templates.TemplateResponse("messages.html", {"request": request, "error": "User not found"})
+        return templates.TemplateResponse("messages.html", {"request": request, "error": "User not found"}, status_code=400)
+    conversation = view_get_conversation(user.id, found.id)
     return templates.TemplateResponse("messages.html", {"request": request, "conversation": conversation, "messages": view_conversations(user.id), 'receiver_id': found.id, "user_id": user.id})
