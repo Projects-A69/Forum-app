@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Create New Topic</h1>
+
+  {% if error %}
+    <div class="error" style="color: red; margin-bottom: 15px;">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="/topics">
+    <div style="margin-bottom: 15px;">
+      <label for="title">Title:</label><br>
+      <input type="text" id="title" name="title" required style="width: 100%; padding: 8px;">
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="text">Content:</label><br>
+      <textarea id="text" name="text" required style="width: 100%; height: 150px; padding: 8px;"></textarea>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="category_id">Category ID:</label><br>
+      <input type="number" id="category_id" name="category_id" required style="padding: 8px;">
+    </div>
+
+    <button type="submit" style="padding: 8px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
+      Create Topic
+    </button>
+  </form>
+
+  <a href="/topics" style="display: inline-block; margin-top: 20px;">← Back to Topics</a>
+{% endblock %}

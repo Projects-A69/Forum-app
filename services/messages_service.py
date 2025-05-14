@@ -13,12 +13,13 @@ def create_messages(sender_id, receiver_id, text):
 
 
 def view_get_conversation(sender_id, receiver_id):
-    view_con = read_query('SELECT * FROM messages WHERE sender_id = ? AND receiver_id = ? OR receiver_id = ? AND sender_id = ? ORDER BY created_at ASC', (sender_id, receiver_id, receiver_id, sender_id))
+    view_con = read_query('SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY created_at ASC', (sender_id, receiver_id, receiver_id, sender_id))
     return [{
-        "receiver_id": t[0],
+        "id": t[0],
         "sender_id": t[1],
         "text": t[2],
         "date": t[3],
+        "receiver_id": t[4],
     }
     for t in view_con
     ]

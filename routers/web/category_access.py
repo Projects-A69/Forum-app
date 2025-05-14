@@ -18,11 +18,9 @@ def admin_panel(request: Request):
         return RedirectResponse(url="/users/dashboard", status_code=302)
     
     categories = categories_service.get_all()
-    return templates.TemplateResponse("admin_panel.html", {
-        "request": request,
+    return templates.TemplateResponse("admin_panel.html", {"request": request,
         "categories": categories,
-        "current_user": user
-    })
+        "current_user": user})
 
 @admin_router.get("/category/{category_id}", response_class=HTMLResponse)
 def manage_category_access(request: Request, category_id: int):
@@ -34,20 +32,18 @@ def manage_category_access(request: Request, category_id: int):
     if not user or not user.is_admin:
         return RedirectResponse(url="/users/dashboard", status_code=302)
     
-    category = categories_service.get_by_id(category_id)
+    category = categories_service.get_by_id(category_id,user.id)
     if not category:
         return RedirectResponse(url="/admin", status_code=302)
     
     users_with_access = category_access_service.get_category_access(category_id)
     all_users = users_service.get_all_users()
     
-    return templates.TemplateResponse("manage_access.html", {
-        "request": request,
+    return templates.TemplateResponse("manage_access.html", {"request": request,
         "category": category,
         "users_with_access": users_with_access,
         "all_users": all_users,
-        "current_user": user
-    })
+        "current_user": user})
 
 @admin_router.post("/category/{category_id}/grant")
 def grant_access(request: Request, category_id: int, user_id: int = Form(...), 

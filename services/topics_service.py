@@ -32,7 +32,7 @@ def get_all(search: str = None, sort: str = None):
 
 
 def get_by_id(id: int):
-    data = read_query('''SELECT id, title, text, user_id, category_id, best_reply_id
+    data = read_query('''SELECT id, title, text, user_id, category_id, is_locked, date_created, best_reply_id
            FROM topics WHERE id = ?''', (id,))
 
     topic_row = next((row for row in data), None)
