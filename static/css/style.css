@@ -160,3 +160,136 @@ body {
         text-align: center;
     }
 }
+
+
+/* Messages */
+.chat-container {
+    display: flex;
+    height: 100vh;
+    font-family: sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.search-button {
+    padding: 8px;
+    background-color: #7c4dff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.contact {
+    display: block;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: black;
+    background-color: #eee;
+}
+
+.contact.active {
+    background-color: #d1c4e9;
+}
+
+.chat-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* Form message */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 10px;
+}
+
+.msg {
+    max-width: 60%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    position: relative;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.msg.left {
+    align-self: flex-start;
+    background-color: #eeeeee;
+    color: #000;
+}
+
+.msg.right {
+    align-self: flex-end;
+    background-color: #cce4ff;
+    color: #000;
+}
+
+.time {
+    font-size: 0.7em;
+    margin-top: 5px;
+    opacity: 0.6;
+    text-align: right;
+}
+
+/* Send message */
+.chat-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.chat-form input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
+.chat-form button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #4fc3f7;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+}
+/* End Messages */
+
+
+
+
