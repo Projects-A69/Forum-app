@@ -1,6 +1,6 @@
 import unittest
-from routers.topics import get_topic_by_id
-from routers import replies as reply_router
+from routers.api.topics import get_topic_by_id
+from routers.api import replies as reply_router
 from unittest.mock import Mock, patch
 from data.models import Reply, ReplyCreate
 from services.topics_service import topic_service

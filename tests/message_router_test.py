@@ -2,7 +2,7 @@ import unittest
 from http.client import HTTPException
 from unittest.mock import Mock, patch
 from data.models import Message, MessageCreate
-from routers.messages import messages_router, create_message, view_conversation
+from routers.api.messages import messages_router, create_message, view_conversation
 from common.responses import NotFound, Unauthorized
 
 mock_message_service = Mock(spec='services.message_service')
