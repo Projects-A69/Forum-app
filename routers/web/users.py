@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request, Form,Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from data.models import RegisterData, LoginData, User
@@ -37,12 +37,10 @@ def web_register(
             "error": f"Phone number '{data.telephone_number}' is already used. Please use a different number or login."})
 
     try:
-        user = User(
-            username=data.username,
+        user = User(username=data.username,
             telephone_number=data.telephone_number,
             email=data.email,
-            password=data.password
-        )
+            password=data.password)
         users_service.register_user(user)
         token = users_service.create_token(user)
 
@@ -95,19 +93,20 @@ def show_user_info(request: Request):
         if not user:
             return RedirectResponse(url="/users/login", status_code=302)
 
-        return templates.TemplateResponse("info.html", {
-            "request": request,
-            "user": {
-                "id": user.id,
+        return templates.TemplateResponse("info.html", {"request": request,
+            "user": {"id": user.id,
                 "username": user.username,
                 "telephone_number": user.telephone_number,
                 "email": user.email,
                 "is_admin": user.is_admin,
-                "date_registration": user.date_registration
-            }
-        })
+                "date_registration": user.date_registration}})
     except Exception as e:
         return templates.TemplateResponse("info.html", {
             "request": request,
-            "error": f"An error occurred while fetching user info: {str(e)}"
-        })
+            "error": f"An error occurred while fetching user info: {str(e)}"})
+        
+@web_users_router.get("/logout")
+def logout(response: Response):
+    response = RedirectResponse(url="/")
+    response.delete_cookie(key="access_token")
+    return response

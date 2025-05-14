@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Topic: {{ topic.title }}</h1>
+
+  {% if user and user.is_admin %}
+    <form method="post" action="/topics/{{ topic.id }}/lock" style="margin-bottom: 20px;">
+      <button type="submit" style="padding: 5px 10px; 
+                background-color: {% if topic.is_locked %}#4CAF50{% else %}#f44336{% endif %}; 
+                color: white; border: none; cursor: pointer;">
+        {% if topic.is_locked %}Unlock Topic{% else %}Lock Topic{% endif %}
+      </button>
+    </form>
+  {% endif %}
+
+  <div class="topic-content">
+    <p><strong>ID:</strong> {{ topic.id }}</p>
+    <p><strong>Text:</strong> {{ topic.text }}</p>
+    <p><strong>Author:</strong> User:{{ topic.user_id }}</p>
+    <p><strong>Category ID:</strong> {{ topic.category_id }}</p>
+    <p><strong>Created:</strong> {{ topic.date_create }}</p>
+    {% if topic.is_locked %}
+      <p><strong>Status:</strong> Locked</p>
+    {% endif %}
+  </div>
+
+  <h2>Replies</h2>
+  {% if topic.replies %}
+    <div class="replies-list">
+      {% for reply in topic.replies %}
+        <div class="reply" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;
+             {% if reply.id == topic.best_reply_id %}background-color: #f0fff0;{% endif %}">
+          
+          {% if reply.id == topic.best_reply_id %}
+            <div style="color: green; font-weight: bold;">Best Reply</div>
+          
+          {% elif user and user.id == topic.user_id and not topic.best_reply_id %}
+            <form method="post" action="/topics/{{ topic.id }}/best-reply/{{ reply.id }}" 
+                  style="display: inline;">
+              <button type="submit" style="background: none; border: none; 
+                      color: blue; cursor: pointer; text-decoration: underline;">
+                Mark as Best Reply
+              </button>
+            </form>
+          {% endif %}
+
+          <p>Reply: {{reply.id}}</p>
+          <div class="reply-meta">
+            <span>{{ reply.text }}<br>Posted by User: {{ reply.user_id }}<br>On: {{ reply.date_create }}</span>
+            {% if reply.date_update %}
+              <span>(edited on: {{ reply.date_update }})</span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No replies yet.</p>
+  {% endif %}
+
+  <a href="/topics" style="display: inline-block; margin-top: 20px;">← Back to Topics</a>
+{% endblock %}
