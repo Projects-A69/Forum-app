@@ -24,8 +24,7 @@ def get_all_categories(search: str = None, sort: str = "desc", offset: int = 0, 
     return [Category.from_query_result(*row) for row in data]
 
 
-def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order: str = "ASC", page_size: int = 10, page: int = 0, user_id: int = None):
-
+def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order: str = "ASC", user_id: int = None):
     allowed_sort_columns = ['id', 'title', 'text', 'user_id', 'category_id', 'is_locked', 'date_created', 'best_reply_id']
 
     if sort_by not in allowed_sort_columns:
@@ -33,7 +32,10 @@ def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order:
     if order.upper() not in ["ASC", "DESC"]:
         raise ValueError(f"Invalid sort order: {order}")
 
-    category_data = read_query('''SELECT id, name, info, is_private, date_created, is_locked FROM categories WHERE id = ?''', (id,))
+    category_data = read_query(
+        '''SELECT id, name, info, is_private, date_created, is_locked FROM categories WHERE id = ?''',
+        (id,)
+    )
     
     if not category_data:
         return None
@@ -42,7 +44,7 @@ def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order:
 
     if category.is_private and (user_id is None or not has_access(user_id, category.id, required_level=1)):
         return "no_write_access"
-    
+
     topic_query = '''
         SELECT id, title, text, user_id, category_id, is_locked, date_created, best_reply_id
         FROM topics WHERE category_id = ?
@@ -54,8 +56,8 @@ def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order:
         like = f"%{search}%"
         params.extend([like, like])
 
-    topic_query += f' ORDER BY {sort_by} {order.upper()} LIMIT ? OFFSET ?'
-    params.extend([page_size, page * page_size])
+    topic_query += f' ORDER BY {sort_by} {order.upper()}'
+
     topic_data = read_query(topic_query, tuple(params))
     category.topics = [Topic.from_query_result(*row) for row in topic_data]
 
