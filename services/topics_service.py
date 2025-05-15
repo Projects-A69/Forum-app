@@ -1,6 +1,7 @@
 from data.database import read_query,insert_query
 from data.models import Topic, TopicCreate,Reply
 from services.category_access_service import has_access
+from services.replies_service import get_vote_reply
 
 
 
@@ -123,6 +124,15 @@ def get_topic_with_replies(topic_id: int) -> Topic | None:
         WHERE topic_id = ?
         ORDER BY date_created  # Optional: Sort by newest/oldest''', (topic_id,))
 
-    topic.replies = [Reply.from_query_result(*row) for row in replies_data]
+    replies = []
+    for row in replies_data:
+        reply = Reply.from_query_result(*row)
+        vote_counts = get_vote_reply(reply.id)
+        reply.likes = vote_counts["likes"]
+        reply.dislikes = vote_counts["dislikes"]
+
+        replies.append(reply)
+
+    topic.replies = replies
 
     return topic

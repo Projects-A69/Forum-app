@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import date,datetime
-
+from typing import Optional
 
 class User(BaseModel):
     id: int | None = None
@@ -135,6 +135,8 @@ class Reply(BaseModel):
     date_update: date = None
     user_id: int
     topic_id: int
+    likes: int = 0
+    dislikes: int = 0
 
     @classmethod
     def from_query_result(cls, id, text, date_create, date_update, user_id, topic_id):

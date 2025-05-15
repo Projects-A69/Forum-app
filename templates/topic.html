@@ -51,23 +51,20 @@
               <span>(edited on: {{ reply.date_update }})</span>
             {% endif %}
           </div>
-  <div style="text-align: right; margin-top: 5px;">
+        <div style="text-align: right; margin-top: 10px;">
   <form method="post" action="/topics/{{ topic.id }}/replies/{{ reply.id }}" style="display: inline;">
     <input type="hidden" name="vote_type" value="1">
-    <button type="submit">👍</button>
+    <button type="submit" class="vote-button {% if reply.user_vote == 1 %}vote-like{% endif %}">👍</button>
   </form>
-  <span>
-    {{ reply.likes }} {{ "like" if reply.likes == 1 else "likes" if reply.likes in [2,3,4] else "like" }}
-  </span>
-
-  <form method="post" action="/topics/{{ topic.id }}/replies/{{ reply.id }}" style="display: inline; margin-left: 10px;">
+  <form method="post" action="/topics/{{ topic.id }}/replies/{{ reply.id }}" style="display: inline;">
     <input type="hidden" name="vote_type" value="0">
-    <button type="submit">👎</button>
+    <button type="submit" class="vote-button {% if reply.user_vote == 0 %}vote-dislike{% endif %}">👎</button>
   </form>
-  <span>
-    {{ reply.dislikes }} {{ "dislikes" if reply.dislikes == 1 else "dislikes" if reply.dislikes in [2,3,4] else "dislikes" }}
-  </span>
-</div>
+
+  <div style="margin-top: 5px; font-size: 14px;">
+    👍 {{ reply.likes }} | 👎 {{ reply.dislikes }}
+  </div>
+      </div>
         </div>
       {% endfor %}
     </div>
