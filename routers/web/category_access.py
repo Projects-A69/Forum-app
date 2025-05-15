@@ -17,7 +17,7 @@ def admin_panel(request: Request):
     if not user or not user.is_admin:
         return RedirectResponse(url="/users/dashboard", status_code=302)
     
-    categories = categories_service.get_all()
+    categories = categories_service.get_all_categories()
     return templates.TemplateResponse("admin_panel.html", {"request": request,
         "categories": categories,
         "current_user": user})

@@ -13,8 +13,12 @@
     <a href="/topics" class="nav-button">Topics</a>
     <a href="/categories" class="nav-button">Categories</a>
     <a href="/messages" class="nav-button">Messages</a>
-
-
+    {% if user %}
+<div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+    <span>Logged user: {{ user.username }}</span>
+    <a href="/users/logout">Logout</a>
+</div>
+{% endif %}
 </header>
     <main class="container">
         {% block content %}{% endblock %}
