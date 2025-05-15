@@ -8,17 +8,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="site-header">
-    <a href="/" class="nav-button">Home</a>
-    <a href="/topics" class="nav-button">Topics</a>
-    <a href="/categories" class="nav-button">Categories</a>
-    <a href="/messages" class="nav-button">Messages</a>
+    <header class="site-header" style="display: flex; align-items: center; padding: 10px;">
+    <a href="/" style="margin-right: 20px;">
+        <img src="/static/images/LOGO.png" alt="Logo" style="height: 50px;">
+    </a>
+    <nav style="display: flex; gap: 15px;">
+        <a href="/" class="nav-button">Home</a>
+        <a href="/topics" class="nav-button">Topics</a>
+        <a href="/categories" class="nav-button">Categories</a>
+        <a href="/messages" class="nav-button">Messages</a>
+    </nav>
+
     {% if current_user %}
-<div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
-    <span>Logged user: {{ current_user.username }}</span>
-    <a href="/users/logout">Logout</a>
-</div>
-{% endif %}
+    <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+        <span>Logged user: {{ current_user.username }}</span>
+        <a href="/users/logout">Logout</a>
+    </div>
+    {% endif %}
 </header>
     <main class="container">
         {% block content %}{% endblock %}
