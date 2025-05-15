@@ -79,7 +79,7 @@ def handle_create_topic(
     text: str = Form(...),
     category_id: int = Form(...)):
     try:
-        user = get_user_or_raise_401(access_token)
+        user = get_user_or_raise_401(request.cookies.get("access_token"))
     except HTTPException:
         return RedirectResponse("/login", status_code=302)
 
