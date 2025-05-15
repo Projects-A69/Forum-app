@@ -64,7 +64,7 @@
   <div style="margin-top: 5px; font-size: 14px;">
     👍 {{ reply.likes }} | 👎 {{ reply.dislikes }}
   </div>
-      </div>
+</div>
         </div>
       {% endfor %}
     </div>
@@ -74,6 +74,10 @@
   <form method="post" action="/topics/{{ topic.id }}/replies" style="margin-top: 20px;">
     <input type="text" name="text" placeholder="Input your reply">
     <button type="submit">Enter</button>
+    {% if error %}
+  <p class="error-message" style="color:red;">{{ error }}</p>
+{% endif %}
+
   </form>
 
   <a href="/topics" style="display: inline-block; margin-top: 20px;">← Back to Topics</a>

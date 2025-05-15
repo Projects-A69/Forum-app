@@ -189,7 +189,9 @@ def handle_replies(
         user = get_user_or_raise_401(access_token)
     except HTTPException:
         return RedirectResponse("/login", status_code=302)
-
+    if text.strip() == "":
+        topic = get_by_id(topic_id)
+        return templates.TemplateResponse("topic.html", {"request": request, "topic": topic, "error": "Input your reply"})
     create_replies(text, user.id, topic_id)
     return RedirectResponse(f"/topics/{topic_id}", status_code=302)
 
@@ -207,11 +209,5 @@ def handle_votes(
         return RedirectResponse("/login", status_code=302)
 
     result = vote_replies(users_id=user.id, replies_id=reply_id, vote_type=vote_type)
-
-    if result == "Reply not found":
-        return templates.TemplateResponse("error.html", {
-            "request": request,
-            "error": "Reply not found"
-        }, status_code=404)
 
     return RedirectResponse(f"/topics/{topic_id}", status_code=302)
