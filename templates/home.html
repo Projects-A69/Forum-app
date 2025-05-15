@@ -2,12 +2,16 @@
 
 {% block content %}
 <div class="welcome-container">
-    <h1>Welcome to ForumApp</h1>
-    <p>Join our community to start discussing</p>
-    
-    <div class="auth-buttons">
-        <a href="/users/register" class="auth-button register">Register</a>
-        <a href="/users/login" class="auth-button login">Login</a>
-    </div>
+    {% if user %}
+        <h1>Hello {{ user.username }}!</h1>
+        <p>Thank you for being part of the community!</p>
+    {% else %}
+        <h1>Welcome to ForumApp</h1>
+        <p>Join our community to start discussing</p>
+        <div class="auth-buttons">
+            <a href="/users/register" class="auth-button register">Register</a>
+            <a href="/users/login" class="auth-button login">Login</a>
+        </div
+    {% endif %}
 </div>
 {% endblock %}
