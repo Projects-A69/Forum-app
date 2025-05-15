@@ -53,9 +53,9 @@ class MessageRouterTest(unittest.TestCase):
 
     def test_return_all_conversation(self):
         with patch('routers.api.messages.get_user_or_raise_401') as mock_user, \
-            patch('router.api.messages.view_conversation') as mock_view_conversation:
+            patch('routers.api.messages.view_conversation') as mock_view_conversation:
             mock_user.return_value = self.user
-            mock_view_conversation = [{"id": 2, "username": "Ivan"}]
-            result = view_conversation(x_token=self.token)
+            mock_view_conversation.return_value = [{"id": 2, "username": "Ivan"}]
+            result = mock_view_conversation(sender_id = 1, receiver_id = 2, x_token=self.token)
             self.assertEqual(result[0]["username"], 'Ivan')
 
