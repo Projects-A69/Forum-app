@@ -163,20 +163,6 @@ body {
 
 
 /* Messages */
-.chat-container {
-    display: flex;
-    height: 100vh;
-    font-family: sans-serif;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 250px;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-right: 1px solid #ccc;
-    overflow-y: auto;
-}
 
 .sidebar h2 {
     margin-top: 0;
@@ -287,6 +273,45 @@ body {
     color: white;
     border-radius: 20px;
     cursor: pointer;
+}
+
+.chat-container {
+  display: flex;
+  height: 90vh;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #f8f8f8;
+  padding: 20px;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.chat-panel {
+  flex: 1;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.user-entry {
+  padding: 10px;
+  background-color: #eee;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.user-entry:hover {
+  background-color: #ddd;
+}
+
+.user-entry.active {
+  background-color: #8a5cff;
+  color: white;
+  font-weight: bold;
 }
 /* End Messages */
 

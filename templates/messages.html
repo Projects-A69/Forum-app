@@ -12,12 +12,17 @@
             {% endif %}
         </form>
             {% for convo in conversations %}
-                <a href="/messages/{{ convo.id }}" class="contact {% if convo.id == receiver_id %}active{% endif %}">
-                    {{ convo.username }}
-                </a>
+                    <div class="user-entry {% if convo.id == receiver_id %}active{% endif %}" data-userid="{{ convo.id }}">
+                        {{ convo.username }}
+         </div>
         {% endfor %}
             <div>
 </div>
+        {% if receiver_id %}
+        <div>
+            <a href="/messages/" class="search-button">Back</a>
+        </div>
+        {% endif %}
     </div>
 
 
@@ -44,6 +49,15 @@
         {% endif %}
     </div>
 </div>
+<script>
+  document.querySelectorAll(".user-entry").forEach(user => {
+    user.addEventListener("click", () => {
+      const userId = user.dataset.userid;
+      window.location.href = `/messages/${userId}`;
+    });
+  });
+</script>
+
 {% endblock %}
 
 
