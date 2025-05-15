@@ -2,7 +2,6 @@ from fastapi import APIRouter, Request, Form
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from services import users_service, categories_service, category_access_service
-from common.auth import get_user_or_raise_401
 
 templates = Jinja2Templates(directory="templates")
 admin_router = APIRouter(prefix="/admin", tags=["Admin"])

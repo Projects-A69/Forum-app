@@ -1,17 +1,62 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="welcome-container">
-    {% if user %}
-        <h1>Hello {{ user.username }}!</h1>
-        <p>Thank you for being part of the community!</p>
+<section class="hero-section">
+  <div class="welcome-container">
+    {% if current_user %}
+      <h1>Hello, {{ current_user.username }}!</h1>
+      <p class="subtitle">Dive into discussions and connect with the ForumApp community.</p>
+
     {% else %}
-        <h1>Welcome to ForumApp</h1>
-        <p>Join our community to start discussing</p>
-        <div class="auth-buttons">
-            <a href="/users/register" class="auth-button register">Register</a>
-            <a href="/users/login" class="auth-button login">Login</a>
-        </div
+      <h1>Welcome to ForumApp</h1>
+      <p class="subtitle">Join our vibrant community to discuss, share, and connect.</p>
+      <div class="auth-buttons">
+        <a href="/users/register" class="auth-button register">Get Started</a>
+        <a href="/users/login" class="auth-button login">Login</a>
+      </div>
     {% endif %}
-</div>
+  </div>
+</section>
+
+<section class="features-section">
+  <h2>Why ForumApp?</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>Engage in Discussions</h3>
+      <p>Join topic discussions. Share your thoughts and vote on replies.</p>
+      <a href="/topics" class="button primary">Browse Topics</a>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✉️</div>
+      <h3>Private Messaging</h3>
+      <p>Connect directly with other users through secure private messages.</p>
+      {% if current_user %}
+        <a href="/messages" class="button primary">Send a Message</a>
+      {% else %}
+        <a href="/users/register" class="button primary">Join Now</a>
+      {% endif %}
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌟</div>
+      <h3>Community Driven</h3>
+      <p>Lock topics, choose best replies, and build a community you love.</p>
+      <a href="/topics" class="button primary">Get Involved</a>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Ready to Join the Conversation?</h2>
+  <p>Explore trending topics or start your own discussion today.</p>
+  {% if current_user %}
+    <a href="/topics/create" class="button success">Create a Topic</a>
+  {% else %}
+    <a href="/users/register" class="button primary">Sign Up</a>
+  {% endif %}
+</section>
+
+<footer class="site-footer">
+  <p>© 2025 ForumApp. All rights reserved.</p>
+</footer>
 {% endblock %}

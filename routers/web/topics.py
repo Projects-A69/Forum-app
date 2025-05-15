@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Request, Form, HTTPException, Cookie
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from data.models import TopicCreate, ReplyCreate
+from data.models import TopicCreate
 from services.topics_service import get_all,get_by_id,create_topic,lock_topic,choose_best_reply,get_topic_with_replies
 from common.auth import get_user_or_raise_401
 from data.database import insert_query
-from services.replies_service import vote_replies, create_replies, get_vote_reply
+from services.replies_service import vote_replies, create_replies
 
 templates = Jinja2Templates(directory="templates")
 web_topics_router = APIRouter(prefix="/topics", tags=["WEB TOPICS"])

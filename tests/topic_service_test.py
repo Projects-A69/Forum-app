@@ -34,8 +34,8 @@ class TopicsServiceShould(unittest.TestCase):
         self.assertEqual(result[0].id, 1)
 
     def test_get_by_id_returns_topic_with_replies(self):
-        created_date = "2023-01-01 10:00:00"
-        updated_date = "2023-01-02 10:00:00"
+        created_date = "2023-01-01 00:00:00"
+        updated_date = "2023-01-02 00:00:00"
         
         self.mock_read_query.side_effect = [[(1, "Topic 1", "Content", 1, 1, None)],
             [(1, "Reply text", created_date, updated_date, 2, 1)]]

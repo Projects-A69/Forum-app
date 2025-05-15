@@ -1,8 +1,4 @@
-from http.client import HTTPException
-
-from services.category_access_service import has_access
 from data.database import read_query, insert_query
-from data.models import Reply, RepliesHasUsers, User, Topic, Category, ReplyCreate
 from data.models import reply_votes
 
 

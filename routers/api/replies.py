@@ -2,8 +2,8 @@ from common.auth import get_user_or_raise_401
 from fastapi import APIRouter, HTTPException, Header
 from services.replies_service import create_replies, vote_replies
 from services.category_access_service import has_access
-from services.topics_service import lock_topic, get_by_id
-from data.models import Reply, ReplyCreate, RepliesHasUsers
+from services.topics_service import get_by_id
+from data.models import ReplyCreate, RepliesHasUsers
 
 replies_router = APIRouter(prefix='/api/replies', tags=['Replies'])
 

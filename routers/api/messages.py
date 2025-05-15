@@ -1,5 +1,5 @@
 from common.auth import get_user_or_raise_401
-from data.models import Message, MessageCreate, User
+from data.models import MessageCreate
 from services.messages_service import create_messages, view_get_conversation, view_conversations
 from fastapi import APIRouter, HTTPException, Header
 

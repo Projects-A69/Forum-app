@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from datetime import date,datetime
-from typing import Optional
+from datetime import date
 
 class User(BaseModel):
     id: int | None = None

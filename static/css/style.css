@@ -66,7 +66,6 @@ body {
   display: none;
 }
 
-
 h1, h2, .admin-title, .dashboard-title {
   color: var(--primary-color);
   margin-bottom: 1.5rem;
@@ -215,12 +214,6 @@ a[href="/users/logout"]:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
 }
-
-
-
-
-
-
 
 /* Messages */
 
@@ -375,6 +368,195 @@ a[href="/users/logout"]:hover {
 }
 /* End Messages */
 
+/* css for search in topic  */
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+form input[type="text"],
+form input[type="number"],
+form select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-right: 8px;
+  transition: border-color 0.3s;
+}
+
+form input[type="text"]:focus,
+form input[type="number"]:focus,
+form select:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+form button {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #45a049;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+ul li a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+ul li a:hover {
+  color: #4CAF50;
+}
+
+p {
+  color: #666;
+  font-style: italic;
+}
+
+
+/* Error Page */
+.error-page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+               'Helvetica Neue', Arial, sans-serif;
+  background-color: #fafafa;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #262626;
+  line-height: 1.5;
+}
+
+.error-page__container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  border-top: 4px solid #ff4d4f;
+}
+
+.error-page__icon {
+  font-size: 3.5rem;
+  color: #ff4d4f;
+  margin-bottom: 1.25rem;
+}
+
+.error-page__title {
+  color: #ff4d4f;
+  margin: 0 0 1.25rem 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.error-page__message {
+  background-color: #fff2f0;
+  color: #262626;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  font-size: 1.05rem;
+  border-left: 3px solid #ff4d4f;
+  text-align: left;
+}
+
+.error-page__home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.75rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #1890ff;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  font-weight: 500;
+}
+
+.error-page__home-link:hover {
+  background-color: #096dd9;
+}
+
+@media (max-width: 480px) {
+  .error-page__container {
+    padding: 1.75rem;
+  }
+  
+  .error-page__title {
+    font-size: 1.5rem;
+  }
+  
+  .error-page__icon {
+    font-size: 3rem;
+  }
+  
+  .error-page__home-link {
+    padding: 0.65rem 1.25rem;
+  }
+}
 
 
 
+/* Home page */
+.features-section {
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.feature-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.feature-card {
+  width: 300px;
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .feature-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .feature-card {
+    width: 100%;
+    max-width: 350px;
+  }
+}

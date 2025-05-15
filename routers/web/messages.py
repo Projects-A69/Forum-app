@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Form, Cookie, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from data.models import Message, MessageCreate, User
+from data.models import MessageCreate
 from services.messages_service import create_messages, view_get_conversation, view_conversations
 from services.users_service import find_by_username
 from common.auth import get_user_or_raise_401

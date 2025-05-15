@@ -1,5 +1,4 @@
 from data.database import read_query, insert_query
-from data.models import Message, User
 
 
 def create_messages(sender_id, receiver_id, text):

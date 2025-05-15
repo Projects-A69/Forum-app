@@ -34,7 +34,7 @@
           {% if reply.id == topic.best_reply_id %}
             <div style="color: green; font-weight: bold;">Best Reply</div>
           
-          {% elif user and user.id == topic.user_id and not topic.best_reply_id %}
+          {% elif user and user.id == topic.user_id and reply.id != topic.best_reply_id %}
             <form method="post" action="/topics/{{ topic.id }}/best-reply/{{ reply.id }}" 
                   style="display: inline;">
               <button type="submit" style="background: none; border: none; 
