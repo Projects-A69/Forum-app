@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Request, Form, HTTPException
+from datetime import datetime
+from fastapi import APIRouter, Request, Form, HTTPException, Depends, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.status import HTTP_302_FOUND
-
-from services import categories_service
+from common.auth import get_user_or_raise_401
+from data.models import CategoryCreate
+from services.categories_service import get_all_categories, create_category, get_by_id, lock_category
 from services.users_service import is_authenticated, from_token
 
 web_categories_router = APIRouter(prefix="/categories", tags=["Web - Categories"])
@@ -31,7 +33,7 @@ async def list_categories(
     user = get_current_user(request)
     user_id = user.id if user else None
 
-    categories = categories_service.get_all_categories(search=search, sort=sort)
+    categories = get_all_categories(search=search, sort=sort)
     return templates.TemplateResponse("categories.html", {
         "request": request,
         "categories": categories,
@@ -54,31 +56,28 @@ async def create_category_form(request: Request):
     })
 
 
-@web_categories_router.post("/create")
+@web_categories_router.post("/categories/create")
 async def create_category_post(
     request: Request,
     name: str = Form(...),
     info: str = Form(""),
-    is_private: bool = Form(False)
+    token: str = Depends(get_user_or_raise_401)
 ):
-    token = get_token_from_request(request)
-    user = from_token(token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    try:
+        category_create = CategoryCreate(
+            name=name.strip(),
+            info=info.strip(),
+            is_private=False,
+            date_created=datetime.utcnow(),
+            is_locked=False
+        )
+        category = create_category(category_create, token)
+    except ValueError as e:
+        context = {"request": request, "error": str(e)}
+        context["request"].form = {"name": name, "info": info}
+        return templates.TemplateResponse("category_create.html", context)
 
-    from data.models import CategoryCreate
-    import datetime
-
-    category = CategoryCreate(
-        name=name,
-        info=info,
-        is_private=is_private,
-        date_created=datetime.datetime.utcnow(),
-        is_locked=False
-    )
-
-    categories_service.create_category(category, token)
-    return RedirectResponse("/categories", status_code=HTTP_302_FOUND)
+    return RedirectResponse(url=f"/categories/{category.id}", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @web_categories_router.get("/{category_id}")
@@ -87,7 +86,7 @@ async def view_category(request: Request, category_id: int, search: str = None, 
     user = get_current_user(request)
     user_id = user.id if user else None
 
-    category = categories_service.get_by_id(
+    category = get_by_id(
         category_id,
         search=search,
         sort_by=sort,
@@ -113,5 +112,5 @@ async def lock_category(request: Request, category_id: int):
     if not token or not is_authenticated(token):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    category = categories_service.lock_category(category_id, token)
+    category = lock_category(category_id, token)
     return RedirectResponse(f"/categories/{category_id}", status_code=HTTP_302_FOUND)

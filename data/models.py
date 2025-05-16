@@ -117,9 +117,10 @@ class Category(BaseModel):
 class CategoryCreate(BaseModel):
     name: str
     info:str
+    is_private: bool = False
+    is_locked: bool = False
     date_created: date = None
-    is_private: int = 0
-    is_locked: int = 0
+
 
 class TopicCreate(BaseModel):
     title: str
