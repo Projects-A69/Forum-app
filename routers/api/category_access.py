@@ -21,8 +21,7 @@ def update_category_access(category_id: int, user_id: int, access: CategoryAcces
 
     grant_access(user_id, category_id, access.access_level)
     
-    return {"success": True,
-            "message": f"Access level updated to {'read' if access.access_level == 0 else 'write'}.",
+    return {"message": f"Access level updated to {'read' if access.access_level == 0 else 'write'}.",
             "category_id": category_id,
             "user_id": user_id,
             "access_level": "read" if access.access_level == 0 else "write"}
@@ -38,8 +37,7 @@ def delete_category_access(category_id: int, user_id: int, x_token: str = Header
         raise HTTPException(status_code=404, detail="Category not found.")
     
     revoke_access(user_id, category_id)
-    return {"success": True,
-        "message": "Access revoked.",
+    return {"message": "Access revoked.",
         "category_id": category_id,
         "user_id": user_id}
 
@@ -55,8 +53,6 @@ def get_privileged_users(category_id: int, x_token: str = Header()):
 
 
     users = get_category_access(category_id)
-    return {
-        "success": True,
-        "category_id": category_id,
+    return {"category_id": category_id,
         "users": [{"user_id": user["user_id"],"username": user["username"],"access_level": "read" if user["access_level"] == 0 else "write"}
             for user in users]}
