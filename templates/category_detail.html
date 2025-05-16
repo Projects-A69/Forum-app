@@ -11,7 +11,7 @@
   {% if category.topics %}
     <ul>
       {% for topic in category.topics %}
-        <li>{{ topic.title }}</li>
+        <li><a href="/topics/{{ topic.id }}">{{ topic.title }}</a></li>
       {% endfor %}
     </ul>
   {% else %}
