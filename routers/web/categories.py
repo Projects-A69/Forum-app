@@ -64,8 +64,9 @@ async def create_category_post(
     name: str = Form(...),
     info: str = Form(""),
     is_private: str | None = Form(None),
-    token: str = Depends(get_user_or_raise_401)
+    access_token: str = Cookie(default=None),
 ):
+    token = request.cookies.get("access_token")
     user = from_token(token)
 
     private_flag = bool(is_private) and user.is_admin
