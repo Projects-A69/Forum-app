@@ -7,7 +7,7 @@
     <div class="error" style="color: red; margin-bottom: 15px;">{{ error }}</div>
   {% endif %}
 
-  <form method="post" action="/categories/create">
+  <form method="post" action="/categories/create?token={{ request.cookies.get('access_token') }}">
     <div style="margin-bottom: 15px;">
       <label for="name">Name:</label><br>
       <input
