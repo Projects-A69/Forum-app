@@ -1,4 +1,3 @@
-from datetime import datetime
 from fastapi import APIRouter, Request, Form, HTTPException, Depends, status, Cookie
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -15,21 +14,13 @@ templates = Jinja2Templates(directory="templates")
 def get_token_from_request(request: Request, token: str = Cookie(None, alias="access_token")) -> str | None:
     return token
 
-
-def get_current_user(request: Request):
-    token = get_token_from_request(request)
-    if token and is_authenticated(token):
-        return from_token(token)
-    return None
-
-
 @web_categories_router.get("/")
 async def list_categories(
     request: Request,
     search: str = None,
     sort: str = "desc",
 ):
-    user = get_current_user(request)
+    user = get_user_or_raise_401(request.cookies.get("access_token"))
     user_id = user.id if user else None
 
     categories = []
@@ -57,7 +48,7 @@ async def list_categories(
 
 @web_categories_router.get("/create")
 async def create_category_form(request: Request):
-    user = get_current_user(request)
+    user = get_user_or_raise_401(request.cookies.get("access_token"))
     if not user:
         return RedirectResponse("/users/login", status_code=HTTP_302_FOUND)
 
@@ -103,7 +94,7 @@ async def create_category_post(
 
 @web_categories_router.get("/{category_id}")
 async def view_category(request: Request, category_id: int, search: str = None, sort: str = "date_created", order: str = "ASC"):
-    user = get_current_user(request)
+    user = get_user_or_raise_401(request.cookies.get("access_token"))
     user_id = user.id if user else None
 
     category = get_by_id(
