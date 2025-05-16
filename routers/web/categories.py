@@ -6,8 +6,8 @@ from starlette.status import HTTP_302_FOUND
 from services import categories_service
 from services.users_service import is_authenticated, from_token
 
-router = APIRouter(prefix="/categories", tags=["Web - Categories"])
-templates = Jinja2Templates(directory="app/templates")
+web_categories_router = APIRouter(prefix="/categories", tags=["Web - Categories"])
+templates = Jinja2Templates(directory="templates")
 
 
 def get_token_from_request(request: Request) -> str | None:
@@ -21,7 +21,7 @@ def get_current_user(request: Request):
     return None
 
 
-@router.get("/")
+@web_categories_router.get("/")
 async def list_categories(
     request: Request,
     search: str = None,
@@ -41,7 +41,7 @@ async def list_categories(
     })
 
 
-@router.get("/create")
+@web_categories_router.get("/create")
 async def create_category_form(request: Request):
     token = get_token_from_request(request)
     if not token or not is_authenticated(token):
@@ -54,7 +54,7 @@ async def create_category_form(request: Request):
     })
 
 
-@router.post("/create")
+@web_categories_router.post("/create")
 async def create_category_post(
     request: Request,
     name: str = Form(...),
@@ -81,7 +81,7 @@ async def create_category_post(
     return RedirectResponse("/categories", status_code=HTTP_302_FOUND)
 
 
-@router.get("/{category_id}")
+@web_categories_router.get("/{category_id}")
 async def view_category(request: Request, category_id: int, search: str = None, sort: str = "date_created", order: str = "ASC"):
     token = get_token_from_request(request)
     user = get_current_user(request)
@@ -107,7 +107,7 @@ async def view_category(request: Request, category_id: int, search: str = None, 
     })
 
 
-@router.post("/{category_id}/lock")
+@web_categories_router.post("/{category_id}/lock")
 async def lock_category(request: Request, category_id: int):
     token = get_token_from_request(request)
     if not token or not is_authenticated(token):
