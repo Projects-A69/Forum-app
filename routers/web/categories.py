@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Form, HTTPException, Depends, status, Cookie
+from fastapi import APIRouter, Request, Form, HTTPException, status, Cookie
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.status import HTTP_302_FOUND
@@ -24,6 +24,7 @@ async def list_categories(
     user_id = user.id if user else None
 
     categories = []
+    error = None
 
     if search:
         if search.isdigit():
@@ -31,10 +32,16 @@ async def list_categories(
                 category_id=int(search),
                 user_id=user_id
             )
-            if category and category != "no_write_access":
+            if category == "no_write_access":
+                error = "You do not have access to this category."
+            elif category is None:
+                error = f"No category found with ID {search}."
+            else:
                 categories = [category]
         else:
             categories = get_all_categories(search=search, sort=sort)
+            if not categories:
+                error = f"No categories match '{search}'."
     else:
         categories = get_all_categories(sort=sort)
 
@@ -43,7 +50,8 @@ async def list_categories(
         "categories": categories,
         "search": search,
         "sort": sort,
-        "current_user": user
+        "current_user": user,
+        "error": error
     })
 
 @web_categories_router.get("/create")

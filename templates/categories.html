@@ -2,6 +2,12 @@
 {% block content %}
   <h1>All Categories</h1>
 
+  {% if error %}
+    <div class="alert alert-warning" style="margin-bottom: 20px; padding: 10px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; border-radius: 5px;">
+      {{ error }}
+    </div>
+  {% endif %}
+
   {% if current_user %}
     <div style="margin-bottom: 20px;">
       <a href="/categories/create" class="button success">Create New Category</a>
