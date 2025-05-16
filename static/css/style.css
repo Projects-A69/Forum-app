@@ -366,6 +366,10 @@ a[href="/users/logout"]:hover {
   color: white;
   font-weight: bold;
 }
+.no-msg {
+    color: #777;
+    font-style: italic;
+}
 /* End Messages */
 
 /* css for search in topic  */

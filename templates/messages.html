@@ -27,16 +27,19 @@
 
 
     <div class="chat-panel">
-        {% if messages %}
         <div class="chat-messages" id="messages">
+        {% if messages %}
             {% for msg in messages %}
                 <div class="msg {{ 'right' if msg.sender_id == user_id else 'left' }}">
                     {{ msg.text }}
                     <div class="time">{{ msg.created_at }}</div>
                 </div>
             {% endfor %}
+            {% else %}
+            <p class="no-msg">Start the conversation.</p>
         </div>
-
+        {% endif %}
+        {% if receiver_id %}
         <form action="/messages/create" method="post" class="chat-form">
             <input type="text" name="text" placeholder="Type a message..." required>
             <input type="hidden" name="sender_id" value="{{ user_id }}">
@@ -44,8 +47,6 @@
             <input type="hidden" name="created_at" value="2025-05-11">
             <button>Send</button>
         </form>
-        {% else %}
-            <p>Select a conversation to start messaging.</p>
         {% endif %}
     </div>
 </div>
