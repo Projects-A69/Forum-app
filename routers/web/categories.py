@@ -61,7 +61,7 @@ async def create_category_form(request: Request):
     if not user:
         return RedirectResponse("/users/login", status_code=HTTP_302_FOUND)
 
-    return templates.TemplateResponse("category_create.html", {
+    return templates.TemplateResponse("create_category.html", {
         "request": request,
         "current_user": user
     })
@@ -97,7 +97,7 @@ async def create_category_post(
             "is_private": private_flag,
             "current_user": user
         }
-        return templates.TemplateResponse("category_create.html", context)
+        return templates.TemplateResponse("create_category.html", context)
 
     return RedirectResponse(url=f"/categories/{category.id}", status_code=status.HTTP_303_SEE_OTHER)
 
