@@ -18,6 +18,7 @@ def get_token_from_request(request: Request, token: str = Cookie(None, alias="ac
 async def list_categories(
     request: Request,
     search: str = None,
+    id: int = None,
     sort: str = "desc",
 ):
     user = get_user_or_raise_401(request.cookies.get("access_token"))
@@ -26,22 +27,16 @@ async def list_categories(
     categories = []
     error = None
 
-    if search:
-        if search.isdigit():
-            category = get_by_id(
-                category_id=int(search),
-                user_id=user_id
-            )
-            if category == "no_write_access":
-                error = "You do not have access to this category."
-            elif category is None:
-                error = f"No category found with ID {search}."
-            else:
-                categories = [category]
+    if id is not None:
+        category = get_by_id(category_id=id, user_id=user_id)
+        if category is None:
+            error = f"No category found with ID {id}."
+        elif category == "no_write_access":
+            error = "You do not have access to this category."
         else:
-            categories = get_all_categories(search=search, sort=sort)
-            if not categories:
-                error = f"No categories match '{search}'."
+            categories = [category]
+    elif search:
+        categories = get_all_categories(search=search, sort=sort)
     else:
         categories = get_all_categories(sort=sort)
 
@@ -50,9 +45,10 @@ async def list_categories(
         "categories": categories,
         "search": search,
         "sort": sort,
-        "current_user": user,
-        "error": error
+        "error": error,
+        "current_user": user
     })
+
 
 @web_categories_router.get("/create")
 async def create_category_form(request: Request):
