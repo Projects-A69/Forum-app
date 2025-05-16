@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Category: {{ category.name }}</h1>
+
+  <p><strong>Info:</strong> {{ category.info }}</p>
+  <p><strong>Private:</strong> {{ "Yes" if category.is_private else "No" }}</p>
+  <p><strong>Locked:</strong> {{ "Yes" if category.is_locked else "No" }}</p>
+  <p><strong>Date Created:</strong> {{ category.date_created }}</p>
+
+  <h2>Topics</h2>
+  {% if category.topics %}
+    <ul>
+      {% for topic in category.topics %}
+        <li>{{ topic.title }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No topics found in this category.</p>
+  {% endif %}
+
+  <p><a href="/categories">Back to Categories</a></p>
+{% endblock %}
