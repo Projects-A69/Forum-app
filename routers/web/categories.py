@@ -1,5 +1,5 @@
 from datetime import datetime
-from fastapi import APIRouter, Request, Form, HTTPException, Depends, status
+from fastapi import APIRouter, Request, Form, HTTPException, Depends, status, Cookie
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.status import HTTP_302_FOUND
@@ -12,8 +12,8 @@ web_categories_router = APIRouter(prefix="/categories", tags=["Web - Categories"
 templates = Jinja2Templates(directory="templates")
 
 
-def get_token_from_request(request: Request) -> str | None:
-    return request.cookies.get("access_token")
+def get_token_from_request(request: Request, token: str = Cookie(None, alias="access_token")) -> str | None:
+    return token
 
 
 def get_current_user(request: Request):
@@ -61,7 +61,7 @@ async def create_category_form(request: Request):
     if not user:
         return RedirectResponse("/users/login", status_code=HTTP_302_FOUND)
 
-    return templates.TemplateResponse("category_create.html", {
+    return templates.TemplateResponse("create_category.html", {
         "request": request,
         "current_user": user
     })
@@ -84,7 +84,6 @@ async def create_category_post(
             name=name.strip(),
             info=info.strip(),
             is_private=private_flag,
-            date_created=datetime.utcnow(),
             is_locked=False
         )
         category = create_category(category_create, token)
@@ -97,7 +96,7 @@ async def create_category_post(
             "is_private": private_flag,
             "current_user": user
         }
-        return templates.TemplateResponse("category_create.html", context)
+        return templates.TemplateResponse("create_category.html", context)
 
     return RedirectResponse(url=f"/categories/{category.id}", status_code=status.HTTP_303_SEE_OTHER)
 
