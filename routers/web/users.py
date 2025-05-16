@@ -45,7 +45,7 @@ def web_register(
         token = users_service.create_token(user)
 
         response = RedirectResponse(url="/users/dashboard", status_code=302)
-        response.set_cookie(key="access_token", value=token, httponly=True, secure=True)
+        response.set_cookie(key="access_token", value=token)
         response.set_cookie(key="flash_message", value=f"User '{data.username}' registered successfully.", max_age=5)
         return response
     except Exception as e:
@@ -66,7 +66,7 @@ def web_login(request: Request,
     if user and bcrypt.checkpw(data.password.encode(), user.password.encode()):
         token = users_service.create_token(user)
         response = RedirectResponse(url=f"/users/dashboard", status_code=302)
-        response.set_cookie(key="access_token", value=token, httponly=True, secure=True)
+        response.set_cookie(key="access_token", value=token)
         return response
     return templates.TemplateResponse("login.html", {"request": request,"error": "Invalid username or password."})
 

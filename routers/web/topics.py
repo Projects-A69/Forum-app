@@ -70,7 +70,7 @@ def show_topic(request: Request, id: int):
     return templates.TemplateResponse("topic.html", {
         "request": request,
         "topic": topic_with_replies,
-        "user": current_user})
+        "current_user": current_user})
 
 @web_topics_router.post("/", response_class=HTMLResponse)
 def handle_create_topic(

@@ -34,7 +34,7 @@
           {% if reply.id == topic.best_reply_id %}
             <div style="color: green; font-weight: bold;">Best Reply</div>
           
-          {% elif user and user.id == topic.user_id and reply.id != topic.best_reply_id %}
+          {% elif current_user and current_user.id == topic.user_id and reply.id != topic.best_reply_id %}
             <form method="post" action="/topics/{{ topic.id }}/best-reply/{{ reply.id }}" 
                   style="display: inline;">
               <button type="submit" style="background: none; border: none; 
@@ -46,11 +46,22 @@
 
           <p>Reply: {{reply.id}}</p>
           <div class="reply-meta">
-            <span>{{ reply.text }}<br>Posted by User: {{ reply.user_id }}<br>On: {{ reply.date_create }}</span>
-            {% if reply.date_update %}
-              <span>(edited on: {{ reply.date_update }})</span>
-            {% endif %}
-          </div>
+            <div style="
+              font-weight: bold;
+              font-size: 16px;
+              margin-bottom: 10px;
+              color: {% if reply.id == topic.best_reply_id %}green{% else %}#333{% endif %};
+            ">
+              {{ reply.text }}
+            </div>
+
+            <div style="font-size: 14px;">
+              Posted by User: {{ reply.user_id }}<br>
+              On: {{ reply.date_create }}
+              {% if reply.date_update %}
+                <span>(edited on: {{ reply.date_update }})</span>
+              {% endif %}
+            </div>
         <div style="text-align: right; margin-top: 10px;">
   <form method="post" action="/topics/{{ topic.id }}/replies/{{ reply.id }}" style="display: inline;">
     <input type="hidden" name="vote_type" value="1">
