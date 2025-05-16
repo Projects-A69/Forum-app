@@ -42,12 +42,12 @@ def show_topics(request: Request,id: int | None = None, search: str | None = Non
 @web_topics_router.get("/create", response_class=HTMLResponse)
 def show_create_topic_form(request: Request):
     try:
-        user = get_user_or_raise_401(request.cookies.get("access_token"))
+        current_user = get_user_or_raise_401(request.cookies.get("access_token"))
     except HTTPException:
         return RedirectResponse("/login", status_code=302)
 
     return templates.TemplateResponse("create_topic.html", {"request": request,
-        "user": user})
+        "current_user": current_user})
 
 @web_topics_router.get("/{id}", response_class=HTMLResponse)
 def show_topic(request: Request, id: int):
@@ -70,7 +70,7 @@ def show_topic(request: Request, id: int):
     return templates.TemplateResponse("topic.html", {
         "request": request,
         "topic": topic_with_replies,
-        "user": current_user})
+        "current_user": current_user})
 
 @web_topics_router.post("/", response_class=HTMLResponse)
 def handle_create_topic(

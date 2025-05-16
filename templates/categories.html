@@ -14,7 +14,7 @@
 
   <form method="get" action="/categories" style="margin-bottom: 20px;">
     <label for="id">Search Category by ID:</label>
-    <input type="number" name="id" required>
+    <input type="number" name="id" id="id" value="{{ request.query_params.get('id', '') }}" required>
     <button type="submit">Search</button>
   </form>
 
@@ -31,7 +31,12 @@
   {% if categories %}
     <ul>
       {% for category in categories %}
-        <li><a href="/categories/{{ category.id }}">{{ category.title }}</a></li>
+        <li>
+          <a href="/categories/{{ category.id }}">{{ category.name }}</a>
+          {% if category.is_locked %}
+            <span style="color: crimson;">(Locked)</span>
+          {% endif %}
+        </li>
       {% endfor %}
     </ul>
   {% else %}

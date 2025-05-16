@@ -568,3 +568,13 @@ p {
   gap: 1.5rem;
   margin-top: 2rem;
 }
+
+
+/* error page gif */
+.error-page__gif {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    margin: 20px auto;
+    display: block;
+}
