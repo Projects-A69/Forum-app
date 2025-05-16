@@ -29,11 +29,24 @@ async def list_categories(
     search: str = None,
     sort: str = "desc",
 ):
-    token = get_token_from_request(request)
     user = get_current_user(request)
     user_id = user.id if user else None
 
-    categories = get_all_categories(search=search, sort=sort)
+    categories = []
+
+    if search:
+        if search.isdigit():
+            category = get_by_id(
+                category_id=int(search),
+                user_id=user_id
+            )
+            if category and category != "no_write_access":
+                categories = [category]
+        else:
+            categories = get_all_categories(search=search, sort=sort)
+    else:
+        categories = get_all_categories(sort=sort)
+
     return templates.TemplateResponse("categories.html", {
         "request": request,
         "categories": categories,
@@ -42,39 +55,48 @@ async def list_categories(
         "current_user": user
     })
 
-
 @web_categories_router.get("/create")
 async def create_category_form(request: Request):
-    token = get_token_from_request(request)
-    if not token or not is_authenticated(token):
+    user = get_current_user(request)
+    if not user:
         return RedirectResponse("/users/login", status_code=HTTP_302_FOUND)
 
-    user = from_token(token)
     return templates.TemplateResponse("category_create.html", {
         "request": request,
         "current_user": user
     })
 
 
-@web_categories_router.post("/categories/create")
+@web_categories_router.post("/create")
 async def create_category_post(
     request: Request,
     name: str = Form(...),
     info: str = Form(""),
+    is_private: str | None = Form(None),
     token: str = Depends(get_user_or_raise_401)
 ):
+    user = from_token(token)
+
+    private_flag = bool(is_private) and user.is_admin
+
     try:
         category_create = CategoryCreate(
             name=name.strip(),
             info=info.strip(),
-            is_private=False,
+            is_private=private_flag,
             date_created=datetime.utcnow(),
             is_locked=False
         )
         category = create_category(category_create, token)
     except ValueError as e:
-        context = {"request": request, "error": str(e)}
-        context["request"].form = {"name": name, "info": info}
+        context = {
+            "request": request,
+            "error": str(e),
+            "name": name,
+            "info": info,
+            "is_private": private_flag,
+            "current_user": user
+        }
         return templates.TemplateResponse("category_create.html", context)
 
     return RedirectResponse(url=f"/categories/{category.id}", status_code=status.HTTP_303_SEE_OTHER)
@@ -82,7 +104,6 @@ async def create_category_post(
 
 @web_categories_router.get("/{category_id}")
 async def view_category(request: Request, category_id: int, search: str = None, sort: str = "date_created", order: str = "ASC"):
-    token = get_token_from_request(request)
     user = get_current_user(request)
     user_id = user.id if user else None
 
@@ -107,10 +128,10 @@ async def view_category(request: Request, category_id: int, search: str = None, 
 
 
 @web_categories_router.post("/{category_id}/lock")
-async def lock_category(request: Request, category_id: int):
+async def lock_category_post(request: Request, category_id: int):
     token = get_token_from_request(request)
     if not token or not is_authenticated(token):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    category = lock_category(category_id, token)
+    lock_category(category_id, token)
     return RedirectResponse(f"/categories/{category_id}", status_code=HTTP_302_FOUND)

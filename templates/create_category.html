@@ -29,17 +29,19 @@
       >{{ info | default('') }}</textarea>
     </div>
 
-    <div style="margin-bottom: 15px;">
-      <label>
-        <input
-          type="checkbox"
-          id="is_private"
-          name="is_private"
-          {% if is_private %} checked {% endif %}
-        >
-        Private Category
-      </label>
-    </div>
+    {% if current_user and current_user.is_admin %}
+      <div style="margin-bottom: 15px;">
+        <label>
+          <input
+            type="checkbox"
+            id="is_private"
+            name="is_private"
+            {% if is_private %} checked {% endif %}
+          >
+          Private Category
+        </label>
+      </div>
+    {% endif %}
 
     <button
       type="submit"
