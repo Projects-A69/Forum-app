@@ -28,7 +28,7 @@ async def list_categories(
     error = None
 
     if id is not None:
-        category = get_by_id(category_id=id, user_id=user_id)
+        category = get_by_id(id, user_id=user_id)
         if category is None:
             error = f"No category found with ID {id}."
         elif category == "no_write_access":
