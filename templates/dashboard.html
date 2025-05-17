@@ -4,15 +4,24 @@
 <div class="dashboard-container">
     <h2 class="dashboard-title">Welcome to Your Dashboard!</h2>
 
-    <section class="dashboard-actions">
-        <div class="action-buttons">
-            <a href="/users/info" class="button action-button">User Info</a>
-            {% if current_user and current_user.is_admin %}
-            <a href="/admin" class="button action-button">Admin Panel</a>
-            {% endif %}
-            <a href="/users/logout" class="button action-button">Logout</a>
-        </div>
-    </section>
+    <div class="dashboard-actions">
+    <div class="action-buttons">
+        <a href="/users/info" class="action-button">User Info</a>
+        {% if current_user and current_user.is_admin %}
+        <a href="/admin" class="action-button">Admin Panel</a>
+        <form action="/users/promote-to-admin" method="post" class="promote-form" style="display: flex; gap: 0.5rem;">
+            <select name="target_user_id" required class="user-select">
+                <option value="" disabled selected>Select User</option>
+                {% for user in regular_users %}
+                <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="action-button promote-btn">Promote</button>
+        </form>
+        {% endif %}
+        <a href="/users/logout" class="action-button">Logout</a>
+    </div>
+</div>
 
     <div class="dashboard-gif">
         <img src="/static/images/Khabib.gif" alt="Dashboard animation">

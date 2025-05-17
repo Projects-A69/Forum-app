@@ -56,9 +56,9 @@
             </div>
 
             <div style="font-size: 14px;">
-              Posted by User: {{ reply.user_id }}<br>
+              Posted by User: {{ reply.username }}<br>
               On: {{ reply.date_create }}
-              {% if reply.date_update %}
+              {% if reply.date_update != reply.date_create %}
                 <span>(edited on: {{ reply.date_update }})</span>
               {% endif %}
             </div>

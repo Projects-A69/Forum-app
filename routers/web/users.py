@@ -80,7 +80,11 @@ def show_dashboard(request: Request):
     if not user:
         return RedirectResponse(url="/users/login", status_code=302)
     
-    return templates.TemplateResponse("dashboard.html", {"request": request,"token": token,"current_user": user})
+    regular_users = []
+    if user.is_admin:
+        regular_users = users_service.get_regular_users()
+    
+    return templates.TemplateResponse("dashboard.html", {"request": request,"token": token,"current_user": user,"regular_users": regular_users})
     
 @web_users_router.get("/info")
 def show_user_info(request: Request):
@@ -110,3 +114,43 @@ def logout(response: Response):
     response = RedirectResponse(url="/")
     response.delete_cookie(key="access_token")
     return response
+
+
+
+@web_users_router.post("/promote-to-admin")
+def promote_to_admin(
+    request: Request,
+    target_user_id: int = Form(...)
+):
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url="/users/login", status_code=302)
+    
+    current_user = users_service.from_token(token)
+    if not current_user:
+        return RedirectResponse(url="/users/login", status_code=302)
+    
+    if not current_user.is_admin:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "current_user": current_user,
+            "error": "Only admins can promote users to admin status."
+        }, status_code=403)
+    
+    result = users_service.make_user_admin(current_user, target_user_id)
+    
+    if result is None:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "current_user": current_user,
+            "error": "User not found."
+        }, status_code=404)
+    
+    if not result:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "current_user": current_user,
+            "error": "You don't have permission to perform this action."
+        }, status_code=403)
+    
+    return RedirectResponse(url="/users/dashboard", status_code=302)

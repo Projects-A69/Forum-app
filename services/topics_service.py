@@ -66,11 +66,17 @@ def create_topic(topic: TopicCreate, user_id: int):
 
     if is_locked:
         return "category_locked"
-
-    if is_private:
-        return "category_private"
     
-    if not has_access(user_id, topic.category_id, required_level=1):
+    user_data = read_query('''SELECT is_admin FROM users WHERE id = ?''', (user_id,))
+    if not user_data:
+        return "user_not_found"
+
+    is_admin = user_data[0][0]
+
+    if is_private and not is_admin:
+        return "category_private"
+
+    if not has_access(user_id, topic.category_id, required_level=1) and not is_admin:
         return "no_write_access"
 
     new_id = insert_query('''INSERT INTO topics (title, text, user_id, category_id) 
@@ -119,14 +125,17 @@ def get_topic_with_replies(topic_id: int) -> Topic | None:
 
     topic = Topic.from_query_result(*data[0])
 
-    replies_data = read_query('''SELECT id, text, date_created, date_updated, user_id, topic_id
+    replies_data = read_query('''SELECT replies.id, replies.text, replies.date_created, 
+        replies.date_updated, replies.user_id, replies.topic_id,users.username
         FROM replies
+        JOIN users ON replies.user_id = users.id
         WHERE topic_id = ?
-        ORDER BY date_created  # Optional: Sort by newest/oldest''', (topic_id,))
+        ORDER BY date_created''', (topic_id,))
 
     replies = []
     for row in replies_data:
-        reply = Reply.from_query_result(*row)
+        reply = Reply.from_query_result(*row[:6])
+        reply.username = row[6]
         vote_counts = get_vote_reply(reply.id)
         reply.likes = vote_counts["likes"]
         reply.dislikes = vote_counts["dislikes"]
