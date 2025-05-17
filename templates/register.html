@@ -48,13 +48,4 @@
     </form>
 </div>
 
-<script>
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        const btn = document.querySelector('.copy-token');
-        btn.textContent = 'Copied!';
-        setTimeout(() => btn.textContent = 'Copy', 2000);
-    });
-}
-</script>
 {% endblock %}

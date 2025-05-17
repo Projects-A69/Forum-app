@@ -588,27 +588,39 @@ p {
 
 
 /* Dashboard update */
-.dashboard-actions {
+.action-button {
+    margin: 0 2rem;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
     text-align: center;
+}
+
+.dashboard-title {
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+}
+
+.dashboard-actions {
     margin: 2rem 0;
 }
 
-.action-buttons {
-    display: inline-block;
-}
-
-.action-button {
-    margin: 0 0.5rem;
-}
 
 .dashboard-gif {
-    text-align: center;
-    margin: 2rem auto;
-    max-width: 600px;
+    margin: 3rem auto;
+    width: 80%;
+    max-width: 800px;
+    min-width: 300px;
 }
 
 .dashboard-gif img {
-    max-width: 100%;
+    width: 100%;
+    height: auto;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #eee;
 }
