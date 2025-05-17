@@ -18,7 +18,7 @@ Flexibility: Supports search, sort, pagination, and private category controls.
 
 ## Database ![image](https://github.com/user-attachments/assets/de596e70-d3fe-4684-87f9-cd78d6611418)
 
-![Database Schema Diagram](/static/images/Database_schema.png)
+## Database ![Database Schema Diagram](/static/images/Database_schema.png)
 
 ## Web Interface (Jinja2 Templates)
 
