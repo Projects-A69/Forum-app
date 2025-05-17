@@ -35,6 +35,11 @@ def has_access(user_id: int, category_id: int, required_level: int) -> bool:
 
     if not result:
         return False
+    
+    is_private = result[0][0]
+    
+    if not is_private:
+        return True
 
     access = read_query('''SELECT access_level FROM categories_has_users 
         WHERE users_id = ? AND categories_id = ?''',(user_id, category_id))
