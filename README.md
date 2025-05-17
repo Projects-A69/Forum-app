@@ -64,22 +64,20 @@ Flexibility: Supports search, sort, pagination, and private category controls.
 
 5. Run Locally
    
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-2. Run the server:
+1. Run the server:
      ```bash
      uvicorn main:app --reload
-3. Open in browser:
+2. Open in browser:
    ```bash
    http://localhost:8000/
-4. Access API Docs:
+3. Access API Docs:
    ```bash
    http://localhost:8000/docs
 
 8. Project structure
 ```
 Forum-app/
+  ├── common/             # Auth logic
   ├── routers/            # API and web routes
   ├── templates/          # Jinja2 templates (HTML)
   ├── static/             # CSS / images
