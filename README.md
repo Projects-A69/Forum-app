@@ -1,4 +1,4 @@
-ForumAPP
+# ForumAPP
 
 Project Description
 
@@ -16,9 +16,9 @@ Authentication: Token-based access for secure endpoints.
 
 Flexibility: Supports search, sort, pagination, and private category controls.
 
-1. Database ![image](https://github.com/user-attachments/assets/de596e70-d3fe-4684-87f9-cd78d6611418)
+## Database ![image](https://github.com/user-attachments/assets/de596e70-d3fe-4684-87f9-cd78d6611418)
 
-2. Web Interface (Jinja2 Templates)
+## Web Interface (Jinja2 Templates)
 
    The application includes a responsive web interface using Jinja2:
    
@@ -35,6 +35,7 @@ Flexibility: Supports search, sort, pagination, and private category controls.
 | Messages                | `/messages/`                | Private chat system with search           |
 
 ------
+## Templates Included
 | Template File           | Description                                        |
 |-------------------------|----------------------------------------------------|
 | `base.html`             | Layout and navigation bar                          |
@@ -54,7 +55,7 @@ Flexibility: Supports search, sort, pagination, and private category controls.
 
 ---
 
-4. Techologies
+## Techologies
 - **FastAPI** - RESTful backend
 - **Jinja2** - Web template rendering
 - **MariaDB** - Database
@@ -62,7 +63,7 @@ Flexibility: Supports search, sort, pagination, and private category controls.
 - **bcrypt** - Password hashing
 - **CSS** - Custom styling
 
-5. Run Locally
+## Run Locally
    
 1. Run the server:
      ```bash
@@ -74,7 +75,7 @@ Flexibility: Supports search, sort, pagination, and private category controls.
    ```bash
    http://localhost:8000/docs
 
-8. Project structure
+## Project structure
 ```
 Forum-app/
   ├── common/             # Auth logic
