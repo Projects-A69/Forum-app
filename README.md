@@ -88,6 +88,12 @@ Forum-app/
   └── README.md
 ```
 ---
+## Database schema location
+
+FORUM-APP/data/Forum_App_schema.sql
+
+
+## Authors:
 Created by Uasim Halak, Dimitur Boychew, Ivan Pustovit
 
 
