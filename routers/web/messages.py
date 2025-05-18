@@ -85,5 +85,7 @@ def find_by_username_web(request: Request, username: str = Form() ,access_token:
     found = find_by_username(username)
     if not found:
         return templates.TemplateResponse("messages.html", {"request": request, "error": "User not found"}, status_code=400)
-    conversation = view_get_conversation(current_user.id, found.id)
-    return templates.TemplateResponse("messages.html", {"request": request, "conversation": conversation, "messages": view_conversations(current_user.id), 'receiver_id': found.id, "user_id": current_user.id, "current_user": current_user})
+    conversations = view_conversations(current_user.id)
+    messages = view_get_conversation(current_user.id, found.id)
+    return templates.TemplateResponse("messages.html", {
+        "request": request, "conversations": conversations, "messages": messages, "receiver_id": found.id, "user_id": current_user.id, "current_user": current_user})
