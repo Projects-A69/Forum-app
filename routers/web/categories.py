@@ -110,8 +110,7 @@ async def view_category(
         search=search,
         sort_by=sort,
         order=order,
-        user_id=user_id,
-        date_created=date.today()
+        user_id=user_id
     )
 
     if category is None:
