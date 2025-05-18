@@ -4,31 +4,27 @@
 <div class="dashboard-container">
     <h2 class="dashboard-title">Welcome to Your Dashboard!</h2>
 
-    <div class="token-container">
-        <h3 class="token-heading">Your Access Token</h3>
-        <div class="token-display small-box">
-            <code>{{ token }}</code>
-        </div>
-        <button class="copy-token large-button" onclick="copyToClipboard('{{ token }}')">Copy Token</button>
-        <p class="token-note">Please store this token securely. It will be required for API access.</p>
-    </div>
-
-    <section class="dashboard-actions">
-        <a href="/users/info" class="button action-button">User Info</a>
+    <div class="dashboard-actions">
+    <div class="action-buttons">
+        <a href="/users/info" class="action-button">User Info</a>
         {% if current_user and current_user.is_admin %}
-        <a href="/admin" class="button action-button">Admin Panel</a>
-    {% endif %}
-        <a href="/users/logout" class="button action-button">Logout</a>
-    </section>
+        <a href="/admin" class="action-button">Admin Panel</a>
+        <form action="/users/promote-to-admin" method="post" class="promote-form" style="display: flex; gap: 0.5rem;">
+            <select name="target_user_id" required class="user-select">
+                <option value="" disabled selected>Select User</option>
+                {% for user in regular_users %}
+                <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="action-button promote-btn">Promote</button>
+        </form>
+        {% endif %}
+        <a href="/users/logout" class="action-button">Logout</a>
+    </div>
 </div>
 
-<script>
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        const btn = document.querySelector('.copy-token');
-        btn.textContent = 'Copied!';
-        setTimeout(() => btn.textContent = 'Copy Token', 2000);
-    });
-}
-</script>
+    <div class="dashboard-gif">
+        <img src="/static/images/Khabib.gif" alt="Dashboard animation">
+    </div>
+</div>
 {% endblock %}

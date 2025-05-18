@@ -88,3 +88,8 @@ def get_all_users() -> list[User]:
         '''SELECT id, username, telephone_number, email, is_admin, password, date_registration FROM users'''
     )
     return [User.from_query_result(*row) for row in data]
+
+
+def get_regular_users():
+    data = read_query("SELECT id, username FROM users WHERE is_admin = 0")
+    return [{"id": row[0], "username": row[1]} for row in data]

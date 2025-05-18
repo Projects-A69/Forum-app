@@ -16,7 +16,7 @@ def admin_panel(request: Request):
     if not user or not user.is_admin:
         return RedirectResponse(url="/users/dashboard", status_code=302)
     
-    categories = categories_service.get_all_categories()
+    categories = categories_service.get_private_categories()
     return templates.TemplateResponse("admin_panel.html", {"request": request,
         "categories": categories,
         "current_user": user})
@@ -32,7 +32,7 @@ def manage_category_access(request: Request, category_id: int):
         return RedirectResponse(url="/users/dashboard", status_code=302)
     
     category = categories_service.get_by_id(category_id,user.id)
-    if not category:
+    if not category or not category.is_private:
         return RedirectResponse(url="/admin", status_code=302)
     
     users_with_access = category_access_service.get_category_access(category_id)
@@ -54,6 +54,10 @@ def grant_access(request: Request, category_id: int, user_id: int = Form(...),
     user = users_service.from_token(token)
     if not user or not user.is_admin:
         return RedirectResponse(url="/users/dashboard", status_code=302)
+    
+    category = categories_service.get_by_id(category_id, user.id)
+    if not category or not category.is_private:
+        return RedirectResponse(url="/admin", status_code=302)
     
     category_access_service.grant_access(user_id, category_id, access_level)
     return RedirectResponse(url=f"/admin/category/{category_id}", status_code=303)
