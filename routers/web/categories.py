@@ -136,7 +136,13 @@ async def edit_category_form(request: Request, category_id: int):
     if not user or not user.is_admin:
         raise HTTPException(status_code=403, detail="Only admins can edit categories.")
 
-    category = get_by_id(category_id, user_id=user.id)
+    category = get_by_id(
+        id=category_id,
+        search=None,
+        sort_by="date_created",
+        order="ASC",
+        user_id=user.id
+    )
     if category is None:
         return templates.TemplateResponse("error.html", {
             "request": request,
@@ -148,6 +154,7 @@ async def edit_category_form(request: Request, category_id: int):
         "category": category,
         "current_user": user
     })
+
 
 @web_categories_router.post("/{category_id}/edit")
 async def edit_category_post(
