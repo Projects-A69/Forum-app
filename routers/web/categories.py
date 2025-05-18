@@ -129,3 +129,54 @@ async def lock_category_post(request: Request, category_id: int):
 
     lock_category(category_id, token)
     return RedirectResponse(f"/categories/{category_id}", status_code=HTTP_302_FOUND)
+
+@web_categories_router.get("/{category_id}/edit")
+async def edit_category_form(request: Request, category_id: int):
+    user = get_user_or_raise_401(request.cookies.get("access_token"))
+    if not user or not user.is_admin:
+        raise HTTPException(status_code=403, detail="Only admins can edit categories.")
+
+    category = get_by_id(category_id, user_id=user.id)
+    if category is None:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": f"Category with ID {category_id} does not exist."
+        }, status_code=403)
+
+    return templates.TemplateResponse("edit_category.html", {
+        "request": request,
+        "category": category,
+        "current_user": user
+    })
+
+@web_categories_router.post("/{category_id}/edit")
+async def edit_category_post(
+    request: Request,
+    category_id: int,
+    name: str = Form(...),
+    info: str = Form(""),
+    is_private: str = Form("off"),
+):
+    user = get_user_or_raise_401(request.cookies.get("access_token"))
+    if not user or not user.is_admin:
+        raise HTTPException(status_code=403, detail="Only admins can edit categories.")
+
+    is_private_flag = is_private.lower() == "on"
+
+    from data.database import update_query
+    try:
+        update_query(
+            '''
+            UPDATE categories
+            SET name = ?, info = ?, is_private = ?
+            WHERE id = ?
+            ''',
+            (name.strip(), info.strip(), int(is_private_flag), category_id)
+        )
+    except Exception as e:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": f"Error updating category: {str(e)}"
+        }, status_code=500)
+
+    return RedirectResponse(f"/categories/{category_id}", status_code=HTTP_302_FOUND)
