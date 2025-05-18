@@ -8,13 +8,9 @@
     </div>
   {% endif %}
 
-  {% if current_user %}
+  {% if current_user and current_user.is_admin %}
     <div style="margin-bottom: 20px;">
       <a href="/categories/create" class="button success">Create New Category</a>
-    </div>
-  {% else %}
-    <div style="margin-bottom: 20px;">
-      <p>Please <a href="/users/login">login</a> to create a new category.</p>
     </div>
   {% endif %}
 

@@ -21,7 +21,6 @@
   <form method="get" action="/topics" style="margin-bottom: 20px;">
     <input type="text" name="search" placeholder="Search by title" value="{{ search or '' }}">
     <select name="sort">
-      <option value="">Sort by...</option>
       <option value="asc" {% if sort == 'asc' %}selected{% endif %}>Ascending</option>
       <option value="desc" {% if sort == 'desc' %}selected{% endif %}>Descending</option>
     </select>
