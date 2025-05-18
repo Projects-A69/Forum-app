@@ -1,18 +1,15 @@
-from fastapi import APIRouter, Request, Form, HTTPException, status, Cookie
+from fastapi import APIRouter, Request, Form, HTTPException, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.status import HTTP_302_FOUND
 from common.auth import get_user_or_raise_401
 from data.models import CategoryCreate
 from services.categories_service import get_all_categories, create_category, get_by_id, lock_category
-from services.users_service import is_authenticated, from_token
+from services.users_service import is_authenticated
 
 web_categories_router = APIRouter(prefix="/categories", tags=["Web - Categories"])
 templates = Jinja2Templates(directory="templates")
 
-
-def get_token_from_request(request: Request, token: str = Cookie(None, alias="access_token")) -> str | None:
-    return token
 
 @web_categories_router.get("/")
 async def list_categories(
@@ -30,8 +27,10 @@ async def list_categories(
     if id is not None:
         category = get_by_id(id, user_id=user_id)
         if category is None:
-            return templates.TemplateResponse("error.html", {"request": request,
-            "error": f"Category with {id} does not exist."}, status_code=403)
+            return templates.TemplateResponse("error.html", {
+                "request": request,
+                "error": f"Category with {id} does not exist."
+            }, status_code=403)
         else:
             categories = [category]
     elif search:
@@ -52,8 +51,6 @@ async def list_categories(
 @web_categories_router.get("/create")
 async def create_category_form(request: Request):
     user = get_user_or_raise_401(request.cookies.get("access_token"))
-    if not user:
-        return RedirectResponse("/users/login", status_code=HTTP_302_FOUND)
 
     return templates.TemplateResponse("create_category.html", {
         "request": request,
@@ -67,10 +64,8 @@ async def create_category_post(
     name: str = Form(...),
     info: str = Form(""),
     is_private: str | None = Form(None),
-    access_token: str = Cookie(default=None),
 ):
-    token = request.cookies.get("access_token")
-    user = from_token(token)
+    user = get_user_or_raise_401(request.cookies.get("access_token"))
 
     private_flag = bool(is_private) and user.is_admin
 
@@ -81,23 +76,28 @@ async def create_category_post(
             is_private=private_flag,
             is_locked=False
         )
-        category = create_category(category_create, token)
+        category = create_category(category_create, token=request.cookies.get("access_token"))
     except ValueError as e:
-        context = {
+        return templates.TemplateResponse("create_category.html", {
             "request": request,
             "error": str(e),
             "name": name,
             "info": info,
             "is_private": private_flag,
             "current_user": user
-        }
-        return templates.TemplateResponse("create_category.html", context)
+        })
 
     return RedirectResponse(url=f"/categories/{category.id}", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @web_categories_router.get("/{category_id}")
-async def view_category(request: Request, category_id: int, search: str = None, sort: str = "date_created", order: str = "ASC"):
+async def view_category(
+    request: Request,
+    category_id: int,
+    search: str = None,
+    sort: str = "date_created",
+    order: str = "ASC"
+):
     user = get_user_or_raise_401(request.cookies.get("access_token"))
     user_id = user.id if user else None
 
@@ -123,17 +123,20 @@ async def view_category(request: Request, category_id: int, search: str = None, 
 
 @web_categories_router.post("/{category_id}/lock")
 async def lock_category_post(request: Request, category_id: int):
-    token = get_token_from_request(request)
-    if not token or not is_authenticated(token):
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    user = get_user_or_raise_401(request.cookies.get("access_token"))
 
-    lock_category(category_id, token)
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Only admins can lock/unlock categories.")
+
+    lock_category(category_id, request.cookies.get("access_token"))
+
     return RedirectResponse(f"/categories/{category_id}", status_code=HTTP_302_FOUND)
+
 
 @web_categories_router.get("/{category_id}/edit")
 async def edit_category_form(request: Request, category_id: int):
     user = get_user_or_raise_401(request.cookies.get("access_token"))
-    if not user or not user.is_admin:
+    if not user.is_admin:
         raise HTTPException(status_code=403, detail="Only admins can edit categories.")
 
     category = get_by_id(
@@ -165,7 +168,7 @@ async def edit_category_post(
     is_private: str = Form("off"),
 ):
     user = get_user_or_raise_401(request.cookies.get("access_token"))
-    if not user or not user.is_admin:
+    if not user.is_admin:
         raise HTTPException(status_code=403, detail="Only admins can edit categories.")
 
     is_private_flag = is_private.lower() == "on"
@@ -185,5 +188,33 @@ async def edit_category_post(
             "request": request,
             "error": f"Error updating category: {str(e)}"
         }, status_code=500)
+
+    return RedirectResponse(f"/categories/{category_id}", status_code=HTTP_302_FOUND)
+
+@web_categories_router.post("/{category_id}/private-toggle")
+async def toggle_private_category(request: Request, category_id: int):
+    user = get_user_or_raise_401(request.cookies.get("access_token"))
+
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Only admins can toggle private status.")
+
+    category = get_by_id(category_id, user_id=user.id)
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found.")
+
+    new_private_status = not category.is_private
+
+    from data.database import update_query
+    try:
+        update_query(
+            '''
+            UPDATE categories
+            SET is_private = ?
+            WHERE id = ?
+            ''',
+            (int(new_private_status), category_id)
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update category privacy: {e}")
 
     return RedirectResponse(f"/categories/{category_id}", status_code=HTTP_302_FOUND)

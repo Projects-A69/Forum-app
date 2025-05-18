@@ -19,8 +19,24 @@
   {% endif %}
 
   {% if current_user and current_user.is_admin %}
-    <a href="/categories/{{ category.id }}/edit" class="button warning">Edit Category</a>
+    <div style="margin-top: 20px;">
+
+      <a href="/categories/{{ category.id }}/edit" class="button warning" style="margin-right: 10px;">Edit Category</a>
+
+      <form method="post" action="/categories/{{ category.id }}/lock" style="display:inline;">
+        <button type="submit" class="button danger" style="margin-right: 10px;">
+          {% if category.is_locked %}Unlock{% else %}Lock{% endif %} Category
+        </button>
+      </form>
+
+      <form method="post" action="/categories/{{ category.id }}/private-toggle" style="display:inline;">
+        <button type="submit" class="button info">
+          {% if category.is_private %}Make Public{% else %}Make Private{% endif %}
+        </button>
+      </form>
+
+    </div>
   {% endif %}
 
-  <p><a href="/categories">Back to Categories</a></p>
+  <p style="margin-top: 20px;"><a href="/categories">← Back to Categories</a></p>
 {% endblock %}
