@@ -101,6 +101,11 @@ def lock_category(category_id: int, token: str):
             '''UPDATE categories SET is_locked = 1 WHERE id = ?''',
             (category_id,)
         )
+    if category.is_locked:
+        updated_rows = update_query(
+            '''UPDATE categories SET is_locked = 0 WHERE id = ?''',
+            (category_id,))
+            
         if updated_rows == 0:
             raise HTTPException(status_code=500, detail="Failed to lock the category due to a database error.")
 
