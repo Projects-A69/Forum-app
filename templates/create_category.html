@@ -41,16 +41,14 @@
           Private Category
         </label>
       </div>
-    {% endif %}
 
-  {% if current_user and current_user.is_admin %}
-    <button
-      type="submit"
-      style="padding: 8px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;"
-    >
-      Create Category
-    </button>
-  {% endif %}
+      <button
+        type="submit"
+        style="padding: 8px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;"
+      >
+        Create Category
+      </button>
+    {% endif %}
   </form>
 
   <a href="/categories" style="display: inline-block; margin-top: 20px;">← Back to Categories</a>
