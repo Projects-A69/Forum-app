@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Request, Form, HTTPException, status
+from fastapi import APIRouter, Request, Form, HTTPException, status, Cookie
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.status import HTTP_302_FOUND
 from common.auth import get_user_or_raise_401
 from data.models import CategoryCreate
 from services.categories_service import get_all_categories, create_category, get_by_id, lock_category
-from services.users_service import is_authenticated
+from services.users_service import is_authenticated, from_token
 
 web_categories_router = APIRouter(prefix="/categories", tags=["Web - Categories"])
 templates = Jinja2Templates(directory="templates")
@@ -17,8 +17,10 @@ async def list_categories(
     search: str = None,
     id: int = None,
     sort: str = "desc",
+    access_token: str = Cookie(default=None)
 ):
-    user = get_user_or_raise_401(request.cookies.get("access_token"))
+    token = request.cookies.get("access_token")
+    user = from_token(token)
     user_id = user.id if user else None
 
     categories = []
@@ -63,7 +65,7 @@ async def create_category_post(
     request: Request,
     name: str = Form(...),
     info: str = Form(""),
-    is_private: str | None = Form(None),
+    is_private: str | None = Form(None)
 ):
     user = get_user_or_raise_401(request.cookies.get("access_token"))
 
