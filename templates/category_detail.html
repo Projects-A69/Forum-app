@@ -18,9 +18,9 @@
     <p>No topics found in this category.</p>
   {% endif %}
 
+  {% if current_user and current_user.is_admin %}
+    <a href="/categories/{{ category.id }}/edit" class="button warning">Edit Category</a>
+  {% endif %}
+
   <p><a href="/categories">Back to Categories</a></p>
 {% endblock %}
-
-{% if current_user and current_user.is_admin %}
-  <a href="/categories/{{ category.id }}/edit" class="button warning">Edit Category</a>
-{% endif %}
