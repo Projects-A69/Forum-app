@@ -6,6 +6,7 @@ from common.auth import get_user_or_raise_401
 from data.models import CategoryCreate
 from services.categories_service import get_all_categories, create_category, get_by_id, lock_category
 from services.users_service import is_authenticated, from_token
+from datetime import date
 
 web_categories_router = APIRouter(prefix="/categories", tags=["Web - Categories"])
 templates = Jinja2Templates(directory="templates")
@@ -65,7 +66,7 @@ async def create_category_post(
     request: Request,
     name: str = Form(...),
     info: str = Form(""),
-    is_private: str | None = Form(None)
+    is_private: str | None = Form(None),
 ):
     user = get_user_or_raise_401(request.cookies.get("access_token"))
 
@@ -76,7 +77,8 @@ async def create_category_post(
             name=name.strip(),
             info=info.strip(),
             is_private=private_flag,
-            is_locked=False
+            is_locked=False,
+            date_created=date.today()
         )
         category = create_category(category_create, token=request.cookies.get("access_token"))
     except ValueError as e:
@@ -108,7 +110,8 @@ async def view_category(
         search=search,
         sort_by=sort,
         order=order,
-        user_id=user_id
+        user_id=user_id,
+        date_created=date.today()
     )
 
     if category is None:
