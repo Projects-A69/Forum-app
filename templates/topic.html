@@ -3,7 +3,7 @@
 {% block content %}
   <h1>Topic: {{ topic.title }}</h1>
 
-  {% if user and user.is_admin %}
+  {% if current_user and current_user.is_admin %}
     <form method="post" action="/topics/{{ topic.id }}/lock" style="margin-bottom: 20px;">
       <button type="submit" style="padding: 5px 10px; 
                 background-color: {% if topic.is_locked %}#4CAF50{% else %}#f44336{% endif %}; 
