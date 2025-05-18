@@ -73,11 +73,9 @@ def create_topic(topic: TopicCreate, user_id: int):
 
     is_admin = user_data[0][0]
 
-    if is_private and not is_admin:
-        return "category_private"
-
-    if not has_access(user_id, topic.category_id, required_level=1) and not is_admin:
-        return "no_write_access"
+    if is_private:
+        if not is_admin and not has_access(user_id, topic.category_id, required_level=1):
+            return "no_write_access"
 
     new_id = insert_query('''INSERT INTO topics (title, text, user_id, category_id) 
                              VALUES (?, ?, ?, ?)''',

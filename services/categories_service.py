@@ -42,8 +42,8 @@ def get_by_id(id: int, search: str = None, sort_by: str = "date_created", order:
 
     category = Category.from_query_result(*category_data[0])
 
-    if category.is_private and (user_id is None or not has_access(user_id, category.id, required_level=1)):
-        return "no_write_access"
+    if category.is_private and user_id and not has_access(user_id, category.id, required_level=1):
+        return None
 
     topic_query = '''
         SELECT id, title, text, user_id, category_id, is_locked, date_created, best_reply_id
@@ -105,3 +105,10 @@ def lock_category(category_id: int, token: str):
             raise HTTPException(status_code=500, detail="Failed to lock the category due to a database error.")
 
     return get_by_id(category_id, user.id)
+
+
+def get_private_categories():
+    data = read_query('''SELECT id, name, info, is_private, date_created, is_locked
+                         FROM categories 
+                         WHERE is_private = 1''')
+    return [Category.from_query_result(*row) for row in data]
